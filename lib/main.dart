@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flora/homeUser/home_page.dart';
-import 'package:flora/homeUser/ingredientes_screen.dart';
 import 'package:flora/homeUser/cardapio_screen.dart';
 import 'package:flora/loginUser/login_page.dart';
 import 'package:flora/loginUser/register_page.dart';
