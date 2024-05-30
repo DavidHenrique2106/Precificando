@@ -11,6 +11,7 @@ dependencies:
     sdk: flutter
   flutter_svg: ^1.0.0
   charts_flutter: ^0.12.0
+  image_picker: ^0.8.4+4
 
 dev_dependencies:
   flutter_test:
@@ -18,6 +19,3 @@ dev_dependencies:
     
 flutter:
   uses-material-design: true
-  
-
-    
