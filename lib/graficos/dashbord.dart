@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flora/ingredientes/model/ingredientsPage.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:flora/ingredientes/model/IngredientsPage.dart';
 
 class RelatoriosScreen extends StatelessWidget {
   // Dados que estão vindo de outras telas
