@@ -2,7 +2,6 @@ import 'package:flora/perfil/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:flora/homeUser/home_page.dart';
-import 'package:flora/homeUser/ingredientes_screen.dart';
 import 'package:flora/homeUser/cardapio_screen.dart';
 import 'package:flora/loginUser/login_page.dart';
 import 'package:flora/loginUser/register_page.dart';
@@ -34,7 +33,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/home': (context) => MyHomePage(),
         '/ingredientes': (context) => IngredientListPage(),
-        '/cardapio': (context) => CardapioScreen(),
+        '/cardapio': (context) => ProductListPage(),
         '/login': (context) => LoginPage(),
         '/register': (context) => RegisterPage(),
         '/profile': (context) => ProfilePage(),
