@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:flora/loginUser/register_page.dart';
+import 'package:flora/homeUser/home_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -308,7 +309,7 @@ class _LoginPageState extends State<LoginPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Success!"),
+          title: const Text("Boa!"),
           content: Text(message),
           actions: <Widget>[
             new TextButton(
@@ -328,7 +329,7 @@ class _LoginPageState extends State<LoginPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Error!"),
+          title: const Text("Erro!"),
           content: Text(errorMessage),
           actions: <Widget>[
             new TextButton(
@@ -358,7 +359,10 @@ class _LoginPageState extends State<LoginPage> {
 
       // Verifique se o login foi bem-sucedido
       if (response.success) {
-        // Exiba uma mensagem de sucesso e atualize o estado para indicar que o usuário está logado
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
         showSuccess("Usuário logado com sucesso!");
         setState(() {
           isLoggedIn = true;

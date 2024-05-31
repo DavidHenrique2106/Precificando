@@ -11,6 +11,7 @@ import 'package:flora/ingredientes/model/AddIngredientPage.dart';
 import 'package:flora/ingredientes/model/EditIngredientPage.dart';
 import 'package:flora/ingredientes/model/IngredientsPage.dart';
 import 'package:flora/perfil/profile_page.dart';
+import 'package:flora/homeUser/home_page.dart';
 
 void main() async {
   {
@@ -32,8 +33,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       home: ProfilePage(),
       routes: {
-        '/home': (context) => MyHomePage(),
-        '/ingredientes': (context) => IngredientListPage(),
+        '/home': (context) => HomePage(),
+        '/ingredientes': (context) => IngredientsPage(),
         '/cardapio': (context) => CardapioScreen(),
         '/login': (context) => LoginPage(),
         '/register': (context) => RegisterPage(),
