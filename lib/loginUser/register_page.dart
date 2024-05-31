@@ -198,7 +198,6 @@ class RegisterPageState extends State<RegisterPage> {
                             GestureDetector(
                               onTap: () {
                                 if (formKey.currentState!.validate()) {
-                                  // Implement registration logic
                                   doUserRegistration();
                                 }
                               },
