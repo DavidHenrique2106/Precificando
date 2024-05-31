@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:flora/loginUser/register_page.dart';
+import 'package:flora/homeUser/home_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -69,7 +70,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
           Positioned(
             left: -25,
-            top: 231,
+            top: 230,
             child: Container(
               width: 204,
               height: 163,
@@ -200,7 +201,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         SizedBox(height: 20),
                         Container(
-                          width: 299,
+                          width: 300,
                           height: 40,
                           decoration: BoxDecoration(
                             color: Color(0xFFC1C1C1),
@@ -239,7 +240,7 @@ class _LoginPageState extends State<LoginPage> {
                             }
                           },
                           child: Container(
-                            width: 299,
+                            width: 300,
                             height: 40,
                             decoration: BoxDecoration(
                               color: Color(0xFF5966AB),
@@ -308,7 +309,7 @@ class _LoginPageState extends State<LoginPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Success!"),
+          title: const Text("Boa!"),
           content: Text(message),
           actions: <Widget>[
             new TextButton(
@@ -328,7 +329,7 @@ class _LoginPageState extends State<LoginPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Error!"),
+          title: const Text("Erro!"),
           content: Text(errorMessage),
           actions: <Widget>[
             new TextButton(
@@ -358,7 +359,10 @@ class _LoginPageState extends State<LoginPage> {
 
       // Verifique se o login foi bem-sucedido
       if (response.success) {
-        // Exiba uma mensagem de sucesso e atualize o estado para indicar que o usuário está logado
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => MyHomePage()),
+        );
         showSuccess("Usuário logado com sucesso!");
         setState(() {
           isLoggedIn = true;
