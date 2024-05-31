@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/home': (context) => MyHomePage(),
         '/ingredientes': (context) => IngredientListPage(),
-        '/cardapio': (context) => CardapioScreen(),
+        '/cardapio': (context) => ProductListPage(),
         '/login': (context) => LoginPage(),
         '/register': (context) => RegisterPage(),
       },
