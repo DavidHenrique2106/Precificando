@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flora/loginUser/login_page.dart'; // Importe a página de login
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
+import 'package:flutter/services.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
-  _RegisterPageState createState() => _RegisterPageState();
+  RegisterPageState createState() => RegisterPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _nameController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _establishmentNameController = TextEditingController();
+class RegisterPageState extends State<RegisterPage> {
+  final formKey = GlobalKey<FormState>();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final usernameController = TextEditingController();
+  final cepController = TextEditingController();
+  final cpfController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -133,61 +134,72 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Form(
-                        key: _formKey,
+                        key: formKey,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             SizedBox(height: 30),
-                            _buildTextField(
-                              controller: _nameController,
-                              hintText: 'Nome completo',
+                            TextField(
+                              controller: usernameController,
+                              decoration: InputDecoration(
+                                hintText: 'Nome completo',
+                              ),
+                              obscureText: false,
+                              maxLines: 1,
+                              // Allows for more lines
+                            ),
+                            SizedBox(height: 20), // Added padding
+                            TextField(
+                              controller: emailController,
+                              decoration: InputDecoration(
+                                hintText: 'Email',
+                              ),
                               obscureText: false,
                               maxLines: 1, // Allows for more lines
                             ),
                             SizedBox(height: 20), // Added padding
-                            _buildTextField(
-                              controller: _emailController,
-                              hintText: 'Email',
+                            TextField(
+                              controller: cpfController,
+                              decoration: InputDecoration(
+                                hintText: 'CPF',
+                              ),
                               obscureText: false,
-                              maxLines: 1, // Allows for more lines
+                              maxLines: 1,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'[0-9.-]')), // Only allows numbers
+                                LengthLimitingTextInputFormatter(
+                                    14), // Limits input to 11 characters
+                              ],
                             ),
                             SizedBox(height: 20), // Added padding
-                            _buildTextField(
-                              controller: _phoneController,
-                              hintText: 'Telefone',
+                            TextField(
+                              controller: cepController,
+                              decoration: InputDecoration(
+                                hintText: 'CEP',
+                              ),
                               obscureText: false,
-                              maxLines: 1, // Allows for more lines
+                              maxLines: 1,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'[0-9.-]')),
+                                LengthLimitingTextInputFormatter(10),
+                              ], // Allows for more lines
                             ),
                             SizedBox(height: 20), // Added padding
-                            _buildTextField(
-                              controller: _establishmentNameController,
-                              hintText: 'Nome do estabelecimento',
-                              obscureText: false,
-                              maxLines: 1, // Allows for more lines
-                            ),
-                            SizedBox(height: 20), // Added padding
-                            _buildTextField(
-                              controller: _passwordController,
-                              hintText: 'Senha',
+                            TextField(
+                              controller: passwordController,
+                              decoration: InputDecoration(hintText: 'Senha'),
                               obscureText: true,
                               maxLines: 1, // Allows for more lines
                             ),
                             SizedBox(height: 20),
                             GestureDetector(
                               onTap: () {
-                                if (_formKey.currentState!.validate()) {
-                                  // Implementar lógica de cadastro
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('Cadastro bem-sucedido'),
-                                    ),
-                                  );
-                                  // Retorna para a página de login
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => LoginPage()),
-                                  );
+                                if (formKey.currentState!.validate()) {
+                                  // Implement registration logic
+                                  doUserRegistration();
                                 }
                               },
                               child: Container(
@@ -207,13 +219,8 @@ class _RegisterPageState extends State<RegisterPage> {
                                 ),
                                 child: Center(
                                   child: Text(
-                                    'Criar Conta',
-                                    style: TextStyle(
-                                      fontFamily: 'Poppins',
-                                      fontWeight: FontWeight.w300,
-                                      fontSize: 24,
-                                      color: Colors.white,
-                                    ),
+                                    'Criar conta',
+                                    style: TextStyle(color: Colors.white),
                                   ),
                                 ),
                               ),
@@ -224,7 +231,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                   ),
                 ),
-                // Já tem conta? Faça o Login
+                // Already have an account? Go to Login
                 Positioned(
                   left: 32,
                   top: 629,
@@ -309,5 +316,66 @@ class _RegisterPageState extends State<RegisterPage> {
         color: Colors.black,
       ),
     );
+  }
+
+  void showSuccess() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Sucesso!"),
+          content: const Text("Seu cadastro foi realizado!"),
+          actions: <Widget>[
+            new TextButton(
+              child: const Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showError(String errorMessage) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Error!"),
+          content: Text(errorMessage),
+          actions: <Widget>[
+            new TextButton(
+              child: const Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void doUserRegistration() async {
+    final username = usernameController.text.trim();
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
+    final cep = cepController.text.trim();
+    final cpf = cpfController.text.trim();
+
+    final user = ParseUser.createUser(username, password, email);
+
+    user.set<String>('cep', cep);
+    user.set<String>('cpf', cpf);
+
+    var response = await user.signUp();
+
+    if (response.success) {
+      showSuccess();
+    } else {
+      showError(response.error!.message);
+    }
   }
 }
