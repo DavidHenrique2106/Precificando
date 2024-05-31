@@ -1,6 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:flora/loginUser/register_page.dart';
-import 'package:flora/homeUser/home_page.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final keyApplicationId = 'MGrlk40ufPq0FndIImuk7VlzJb7FSsj1NHHgtuVP';
+  final keyClientKey = 'ZeIrpHMzxeruZCcYQFOmvI5duT6wpGLUJVOWMsMQ';
+  final keyParseServerUrl = 'https://parseapi.back4app.com';
+
+  await Parse().initialize(keyApplicationId, keyParseServerUrl,
+      clientKey: keyClientKey, debug: true);
+
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Login/Logout',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      home: LoginPage(),
+    );
+  }
+}
 
 class LoginPage extends StatefulWidget {
   @override
@@ -9,8 +36,11 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final controllerEmail = TextEditingController();
+  final controllerPassword = TextEditingController();
+
+  bool isLoading = false;
+  bool isLoggedIn = false;
 
   @override
   Widget build(BuildContext context) {
@@ -112,8 +142,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment:
-                    CrossAxisAlignment.start, // Alinhar no início
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Entrar',
@@ -147,7 +176,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           child: Center(
                             child: TextFormField(
-                              controller: _emailController,
+                              controller: controllerEmail,
                               decoration: InputDecoration(
                                 hintText: 'Email',
                                 border: InputBorder.none,
@@ -179,7 +208,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           child: Center(
                             child: TextFormField(
-                              controller: _passwordController,
+                              controller: controllerPassword,
                               decoration: InputDecoration(
                                 hintText: 'Senha',
                                 border: InputBorder.none,
@@ -206,15 +235,7 @@ class _LoginPageState extends State<LoginPage> {
                         GestureDetector(
                           onTap: () {
                             if (_formKey.currentState!.validate()) {
-                              // Implementar lógica de login
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content: Text('Login bem-sucedido')));
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => MyHomePage()),
-                              );
+                              doUserLogin();
                             }
                           },
                           child: Container(
@@ -280,5 +301,75 @@ class _LoginPageState extends State<LoginPage> {
         ],
       ),
     );
+  }
+
+  void showSuccess(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Success!"),
+          content: Text(message),
+          actions: <Widget>[
+            new TextButton(
+              child: const Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showError(String errorMessage) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Error!"),
+          content: Text(errorMessage),
+          actions: <Widget>[
+            new TextButton(
+              child: const Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void doUserLogin() async {
+    // Obtenha o email e a senha dos controladores de texto
+    final email = controllerEmail.text.trim();
+    final password = controllerPassword.text.trim();
+
+    try {
+      // Crie uma nova instância de ParseUser
+
+      final user = ParseUser(email, password, null);
+
+      // Chame o método de login na instância de ParseUser
+      final response = await user.login();
+
+      // Verifique se o login foi bem-sucedido
+      if (response.success) {
+        // Exiba uma mensagem de sucesso e atualize o estado para indicar que o usuário está logado
+        showSuccess("Usuário logado com sucesso!");
+        setState(() {
+          isLoggedIn = true;
+        });
+      } else {
+        // Se o login não for bem-sucedido, exiba uma mensagem de erro
+        showError(response.error!.message ?? "Erro durante o login");
+      }
+    } catch (e) {
+      // Em caso de erro durante o login, exiba uma mensagem de erro genérica
+      showError("Ocorreu um erro durante o login.");
+    }
   }
 }
