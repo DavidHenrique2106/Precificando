@@ -1,5 +1,6 @@
 import 'package:flora/perfil/profile_page.dart';
 import 'package:flutter/material.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:flora/homeUser/home_page.dart';
 import 'package:flora/homeUser/ingredientes_screen.dart';
 import 'package:flora/homeUser/cardapio_screen.dart';
@@ -9,10 +10,26 @@ import 'package:flora/apresentar/homePageAP.dart';
 import 'package:flora/ingredientes/model/AddIngredientPage.dart';
 import 'package:flora/ingredientes/model/EditIngredientPage.dart';
 import 'package:flora/ingredientes/model/IngredientsPage.dart';
-import 'package:flora/graficos/dashbord.dart';
 import 'package:flora/perfil/profile_page.dart';
 
-void main() {
+void main() async {
+  {
+    WidgetsFlutterBinding.ensureInitialized();
+    final keyApplicationId = 'MGrlk40ufPq0FndIImuk7VlzJb7FSsj1NHHgtuVP';
+    final keyClientKey = 'ZeIrpHMzxeruZCcYQFOmvI5duT6wpGLUJVOWMsMQ';
+    final keyParseServerUrl = 'https://parseapi.back4app.com';
+
+    await Parse().initialize(keyApplicationId, keyParseServerUrl,
+        clientKey: keyClientKey, autoSendSessionId: true);
+
+    var firstObject = ParseObject('FirstClass')
+      ..set('message',
+          'Hey ! First message from Flutter. Parse is now connected');
+    await firstObject.save();
+
+    print('done');
+  }
+
   runApp(MyApp());
 }
 
