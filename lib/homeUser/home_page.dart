@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flora/perfil/profile_page.dart';
+import 'package:flora/graficos/dashbord.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -16,7 +17,23 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      if (index == 1) {
+        // Se o índice for 1 (ou seja, o item "Finanças" foi selecionado)
+        // Navegue para a tela de RelatoriosScreen
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => RelatoriosScreen()),
+        );
+      } else if (index == 2) {
+        // Se o índice for 2 (ou seja, o item "Perfil" foi selecionado)
+        // Navegue para a tela de ProfilePage
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ProfilePage()),
+        );
+      } else {
+        _selectedIndex = index;
+      }
     });
   }
 
