@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flora/ingredientes/model/AddIngredientPage.dart';
-
-import 'package:flora/ingredientes/model/EditIngredientPage.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 class AddIngredientPage extends StatefulWidget {
   @override
@@ -51,13 +49,7 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
             SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () {
-                // Obter os novos valores dos campos
-                String name = nameController.text;
-                String quantity = quantityController.text;
-                String ingredient =
-                    '$name - $quantity - R\$$totalCostPrice - R\$$costPricePerUnit';
-                // Adicionar à lista de ingredientes e voltar para a página anterior
-                Navigator.pop(context, ingredient);
+                addIngredientToParse();
               },
               child: Text('Adicionar Ingrediente'),
             ),
@@ -85,5 +77,64 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
       double price = double.tryParse(totalCostPriceController.text) ?? 0.0;
       totalCostPrice = quantity * price;
     });
+  }
+
+  void addIngredientToParse() async {
+    try {
+      final currentUser = await ParseUser.currentUser();
+
+      if (currentUser != null) {
+        String name = nameController.text;
+        double quantity = double.tryParse(quantityController.text) ?? 0.0;
+        double totalCostPrice =
+            double.tryParse(totalCostPriceController.text) ?? 0.0;
+
+        final ingredient = ParseObject('Ingredients')
+          ..set('name', name)
+          ..set('quantity', quantity)
+          ..set('totalCostPrice', totalCostPrice);
+
+        final acl = ParseACL(owner: currentUser);
+        ingredient.setACL(acl);
+
+        final response = await ingredient.save();
+        if (response.success) {
+          // Adicionando o ingrediente à lista e retornando à página IngredientListPage
+          Navigator.pop(context, name);
+        }
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Erro'),
+            content: Text('Ocorreu um erro ao inserir o ingrediente.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
+    } catch (error) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Erro'),
+          content: Text('Ocorreu um erro ao inserir o ingrediente.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
   }
 }
