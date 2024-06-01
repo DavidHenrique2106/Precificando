@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flora/ingredientes/model/IngredientsPage.dart';
+import 'package:flora/perfil/profile_page.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -7,21 +7,20 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int currentTab = 0;
+  int _selectedIndex = 0; // Índice da página selecionada
   bool isFABOpen = false;
   bool isDarkened = false;
 
-  void showFABMenu() {
-    setState(() {
-      isFABOpen = true;
-      isDarkened = true;
-    });
-  }
+  // Páginas a serem exibidas no BottomNavigationBar
+  static List<Widget> _widgetOptions = <Widget>[
+    MyHomePage(), // Página inicial (Home)
+    ProfilePage(), // Página do perfil
+  ];
 
-  void closeFABMenu() {
+  // Função para alternar entre as páginas ao clicar nos itens da barra de navegação
+  void _onItemTapped(int index) {
     setState(() {
-      isFABOpen = false;
-      isDarkened = false;
+      _selectedIndex = index;
     });
   }
 
@@ -38,156 +37,55 @@ class _MyHomePageState extends State<MyHomePage> {
               color: Color.fromRGBO(114, 133, 202, 1),
             ),
           ),
-          Align(
-            alignment: Alignment(0.0, -0.7),
-            child: Container(
-              width: MediaQuery.of(context).size.width * 0.9,
-              height: MediaQuery.of(context).size.height * 0.40,
-              decoration: BoxDecoration(
-                color: Color.fromRGBO(217, 217, 217, 1),
-                borderRadius: BorderRadius.circular(12),
-                border: Border(
-                  top: BorderSide(width: 1, color: Colors.black),
-                ),
-              ),
-              child: Padding(
-                padding: EdgeInsets.only(
-                  top: MediaQuery.of(context).size.height * 0.2 * 0.15,
-                  bottom: MediaQuery.of(context).size.height * 0.2 * 0.2,
-                  left: MediaQuery.of(context).size.width * 0.40 * 0.1,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: MediaQuery.of(context).size.width * 0.9 * 0.3,
-                          height: MediaQuery.of(context).size.width * 0.9 * 0.3,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Flora Matos',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: MediaQuery.of(context).size.width *
-                                    0.8 *
-                                    0.07,
-                              ),
-                            ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height *
-                                  0.2 *
-                                  0.01,
-                            ),
-                            Text(
-                              'Conta Diamante',
-                              style: TextStyle(
-                                color: Color.fromRGBO(128, 111, 111, 1),
-                                fontSize: MediaQuery.of(context).size.width *
-                                    0.8 *
-                                    0.048,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                        top: MediaQuery.of(context).size.height * 0.2 * 0.12,
-                      ),
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.8 * 0.6,
-                        height: MediaQuery.of(context).size.height * 0.2 * 0.30,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Olá, Mundo!',
-                              style: TextStyle(
-                                color: Color(0xfff8f8f8),
-                                fontSize: MediaQuery.of(context).size.width *
-                                    0.8 *
-                                    0.065,
-                                fontWeight: FontWeight.normal,
-                              ),
-                            ),
-                          ],
-                        ),
-                        decoration: BoxDecoration(
-                          color: Color.fromRGBO(114, 133, 202, 1),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border(
-                            top: BorderSide(
-                              width: 1,
-                              color: Color(0xffd4d4d4),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(
-              top: MediaQuery.of(context).size.height * 0.55,
-              left: 1,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          // Foto de perfil, nome e nome da empresa no canto superior esquerdo
+          Positioned(
+            top: 40,
+            left: 20,
+            child: Row(
               children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                      left: MediaQuery.of(context).size.width * 0.1),
-                  child: Text(
-                    'Atividades Recentes             ------',
-                    style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.width * 0.05,
-                      fontWeight: FontWeight.bold,
-                    ),
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.grey,
+                  ),
+                  child: Icon(
+                    Icons.person,
+                    color: Colors.white,
+                    size: 40,
                   ),
                 ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.05),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                SizedBox(width: 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.2,
-                      height: MediaQuery.of(context).size.height * 0.1,
-                      color: Color.fromRGBO(217, 217, 217, 1),
+                    Text(
+                      'Flora Matos',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    SizedBox(width: MediaQuery.of(context).size.width * 0.08),
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.2,
-                      height: MediaQuery.of(context).size.height * 0.1,
-                      color: Color.fromRGBO(217, 217, 217, 1),
-                    ),
-                    SizedBox(width: MediaQuery.of(context).size.width * 0.08),
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.2,
-                      height: MediaQuery.of(context).size.height * 0.1,
-                      color: Color.fromRGBO(217, 217, 217, 1),
+                    Text(
+                      'Empresa XYZ',
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
                     ),
                   ],
                 ),
               ],
             ),
           ),
+          // Modal flutuante com informações de título e descrição (Precificação)
           AnimatedOpacity(
             opacity: isDarkened ? 0.7 : 0.0,
             duration: Duration(milliseconds: 200),
             child: GestureDetector(
-              onTap: closeFABMenu,
+              onTap: () {}, // Evento para fechar os modais
               child: Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
@@ -197,6 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
+      // FAB Menu
       floatingActionButton: Padding(
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(context).size.height * 0.03,
@@ -210,45 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Container(
                 child: Column(
                   children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.4,
-                      height: MediaQuery.of(context).size.width * 0.14,
-                      child: FloatingActionButton(
-                        onPressed: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => IngredientListPage()),
-                          );
-                        },
-                        backgroundColor: Color.fromRGBO(77, 91, 174, 1),
-                        child: Text(
-                          "Ingredientes",
-                          style: TextStyle(
-                            color: Color.fromRGBO(255, 255, 255, 1),
-                            fontSize: MediaQuery.of(context).size.width * 0.055,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.4,
-                      height: MediaQuery.of(context).size.width * 0.14,
-                      child: FloatingActionButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/cardapio');
-                        },
-                        backgroundColor: Color.fromRGBO(77, 91, 174, 1),
-                        child: Text(
-                          "Cardápio",
-                          style: TextStyle(
-                            color: Color.fromRGBO(255, 255, 255, 1),
-                            fontSize: MediaQuery.of(context).size.width * 0.055,
-                          ),
-                        ),
-                      ),
-                    ),
+                    // Adicione os FABs conforme necessário
                   ],
                 ),
               ),
@@ -259,11 +120,9 @@ class _MyHomePageState extends State<MyHomePage> {
               height: MediaQuery.of(context).size.width * 0.16,
               child: FloatingActionButton(
                 onPressed: () {
-                  if (!isFABOpen) {
-                    showFABMenu();
-                  } else {
-                    closeFABMenu();
-                  }
+                  setState(() {
+                    isFABOpen = !isFABOpen;
+                  });
                 },
                 child: Icon(
                   isFABOpen ? Icons.close : Icons.add,
@@ -282,49 +141,61 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButtonLocation:
           FloatingActionButtonLocation.miniCenterDocked,
-      bottomNavigationBar: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height * 0.07,
-        child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20.0),
-            topRight: Radius.circular(20.0),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Color.fromRGBO(217, 217, 217, 1),
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
           ),
-          child: Container(
-            height: MediaQuery.of(context).size.height * 0.078,
-            color: Color.fromRGBO(217, 217, 217, 1),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                IconButton(
-                  icon: Icon(
-                    Icons.home,
-                    size: MediaQuery.of(context).size.width * 0.14,
-                    color: Color.fromRGBO(77, 91, 174, 1),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      currentTab = 0;
-                    });
-                  },
-                ),
-                SizedBox(width: MediaQuery.of(context).size.width * 0.14),
-                IconButton(
-                  icon: Icon(
-                    Icons.person,
-                    size: MediaQuery.of(context).size.width * 0.14,
-                    color: Color.fromRGBO(77, 91, 174, 1),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      currentTab = 0;
-                    });
-                  },
-                ),
-              ],
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Perfil',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Color.fromRGBO(77, 91, 174, 1),
+        onTap: _onItemTapped,
+      ),
+    );
+  }
+
+  // Método para construir o modal flutuante
+  Widget _buildModal(String title, String description) {
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.4,
+      padding: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Color.fromRGBO(77, 91, 174, 1),
             ),
           ),
-        ),
+          SizedBox(height: 5),
+          Text(
+            description,
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.black54,
+            ),
+          ),
+        ],
       ),
     );
   }

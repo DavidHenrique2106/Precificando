@@ -110,21 +110,18 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Perfil'),
+        leading: GestureDetector(
+          onTap: _pickImage,
+          child: CircleAvatar(
+            backgroundImage: _image != null ? FileImage(_image!) : null,
+            child: _image == null ? Icon(Icons.add_a_photo) : null,
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            GestureDetector(
-              onTap: _pickImage,
-              child: CircleAvatar(
-                radius: 50,
-                backgroundImage: _image != null ? FileImage(_image!) : null,
-                child:
-                    _image == null ? Icon(Icons.add_a_photo, size: 50) : null,
-              ),
-            ),
             SizedBox(height: 20),
             Row(
               children: [

@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: ProfilePage(),
+      home: MyHomePage(),
       routes: {
         '/home': (context) => MyHomePage(),
         '/ingredientes': (context) => IngredientListPage(),
