@@ -9,8 +9,7 @@ class AddIngredientPage extends StatefulWidget {
 class _AddIngredientPageState extends State<AddIngredientPage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController quantityController = TextEditingController();
-  final TextEditingController totalCostPriceController =
-      TextEditingController();
+  final TextEditingController totalCostPriceController = TextEditingController();
 
   double costPricePerUnit = 0.0;
   double totalCostPrice = 0.0;
@@ -86,8 +85,7 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
       if (currentUser != null) {
         String name = nameController.text;
         double quantity = double.tryParse(quantityController.text) ?? 0.0;
-        double totalCostPrice =
-            double.tryParse(totalCostPriceController.text) ?? 0.0;
+        double totalCostPrice = double.tryParse(totalCostPriceController.text) ?? 0.0;
 
         final ingredient = ParseObject('Ingredients')
           ..set('name', name)
@@ -99,8 +97,8 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
 
         final response = await ingredient.save();
         if (response.success) {
-          // Adicionando o ingrediente à lista e retornando à página IngredientListPage
-          Navigator.pop(context, name);
+          // Retornar um indicador de sucesso sem enviar o nome do ingrediente
+          Navigator.pop(context, true);
         }
       } else {
         showDialog(

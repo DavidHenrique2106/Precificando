@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:flutter/services.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -11,9 +13,43 @@ class RegisterPageState extends State<RegisterPage> {
   final formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final passwordConfirmController = TextEditingController();
   final usernameController = TextEditingController();
   final cepController = TextEditingController();
   final cpfController = TextEditingController();
+  final birthDateController = TextEditingController();
+  void showConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Confirmação"),
+          content: Text("Deseja confirmar o cadastro com as informações fornecidas?"),
+          actions: <Widget>[
+            TextButton(
+              child: Text("Sim"),
+              onPressed: () {
+                Navigator.of(context).pop();
+                doUserRegistration();
+              },
+            ),
+            TextButton(
+              child: Text("Não"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void handleFormSubmission() {
+    if (formKey.currentState!.validate()) {
+      showConfirmationDialog();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +154,7 @@ class RegisterPageState extends State<RegisterPage> {
                   top: 170,
                   child: Container(
                     width: 350,
-                    height: 500, // Original height
+                    height: 800, // Original height
                     decoration: BoxDecoration(
                       color: Colors.white,
                       boxShadow: [
@@ -132,156 +168,168 @@ class RegisterPageState extends State<RegisterPage> {
                       borderRadius: BorderRadius.all(Radius.circular(12)),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Form(
-                        key: formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            SizedBox(height: 30),
-                            TextField(
-                              controller: usernameController,
-                              decoration: InputDecoration(
-                                hintText: 'Nome completo',
-                              ),
-                              obscureText: false,
-                              maxLines: 1,
-                              // Allows for more lines
-                            ),
-                            SizedBox(height: 20), // Added padding
-                            TextField(
-                              controller: emailController,
-                              decoration: InputDecoration(
-                                hintText: 'Email',
-                              ),
-                              obscureText: false,
-                              maxLines: 1, // Allows for more lines
-                            ),
-                            SizedBox(height: 20), // Added padding
-                            TextField(
-                              controller: cpfController,
-                              decoration: InputDecoration(
-                                hintText: 'CPF',
-                              ),
-                              obscureText: false,
-                              maxLines: 1,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.allow(
-                                    RegExp(r'[0-9.-]')), // Only allows numbers
-                                LengthLimitingTextInputFormatter(
-                                    14), // Limits input to 11 characters
-                              ],
-                            ),
-                            SizedBox(height: 20), // Added padding
-                            TextField(
-                              controller: cepController,
-                              decoration: InputDecoration(
-                                hintText: 'CEP',
-                              ),
-                              obscureText: false,
-                              maxLines: 1,
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.allow(
-                                    RegExp(r'[0-9.-]')),
-                                LengthLimitingTextInputFormatter(10),
-                              ], // Allows for more lines
-                            ),
-                            SizedBox(height: 20), // Added padding
-                            TextField(
-                              controller: passwordController,
-                              decoration: InputDecoration(hintText: 'Senha'),
-                              obscureText: true,
-                              maxLines: 1, // Allows for more lines
-                            ),
-                            SizedBox(height: 20),
-                            GestureDetector(
-                              onTap: () {
-                                if (formKey.currentState!.validate()) {
-                                  doUserRegistration();
-                                }
-                              },
-                              child: Container(
-                                height: 40,
-                                decoration: BoxDecoration(
-                                  color: Color(0xFF5966AB),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.15),
-                                      spreadRadius: 0,
-                                      blurRadius: 30,
-                                      offset: Offset(0, 30),
-                                    ),
-                                  ],
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(12)),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    'Criar conta',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              ),
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Form(
+                          key: formKey,
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+
+                    SizedBox(height: 15),
+                    TextField(
+                      controller: usernameController,
+                      decoration: InputDecoration(
+                        hintText: 'Nome completo',
+                      ),
+                      obscureText: false,
+                      maxLines: 1,
+                      // Allows for more lines
+                    ),
+                    SizedBox(height: 15), // Added padding
+                    TextField(
+                      controller: emailController,
+                      decoration: InputDecoration(
+                        hintText: 'Email',
+                      ),
+                      obscureText: false,
+                      maxLines: 1, // Allows for more lines
+                    ),
+                    SizedBox(height: 15), // Added padding
+                    TextField(
+                      controller: cpfController,
+                      decoration: InputDecoration(
+                        hintText: 'CPF',
+                      ),
+                      obscureText: false,
+                      maxLines: 1,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                            RegExp(r'[0-9.-]')), // Only allows numbers
+                        LengthLimitingTextInputFormatter(
+                            14), // Limits input to 11 characters
+                      ],
+                    ),
+                    SizedBox(height: 15),
+                    TextField(
+                      controller: birthDateController,
+                      decoration: InputDecoration(
+                        hintText: 'Data de nascimento (DD/MM/AAAA)',
+                      ),
+                      obscureText: false,
+                      maxLines: 1,
+                    ),
+                    SizedBox(height: 15), // Added padding
+                    TextField(
+                      controller: cepController,
+                      decoration: InputDecoration(
+                        hintText: 'CEP',
+                      ),
+                      obscureText: false,
+                      maxLines: 1,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                            RegExp(r'[0-9.-]')),
+                        LengthLimitingTextInputFormatter(10),
+                      ], // Allows for more lines
+                    ),
+                    SizedBox(height: 15), // Added padding
+                    TextField(
+                      controller: passwordController,
+                      decoration: InputDecoration(hintText: 'Senha'),
+                      obscureText: true,
+                      maxLines: 1, // Allows for more lines
+                    ),
+                    SizedBox(height: 15),
+                    TextField(
+                      controller: passwordConfirmController,
+                      decoration: InputDecoration(hintText: 'Confirme a senha'),
+                      obscureText: true,
+                      maxLines: 1,
+                    ),
+                    SizedBox(height: 20),
+                    GestureDetector(
+                      onTap: handleFormSubmission,
+                      child: Container(
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: Color(0xFF5966AB),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.15),
+                              spreadRadius: 0,
+                              blurRadius: 30,
+                              offset: Offset(0, 30),
                             ),
                           ],
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(12)),
+                        ),
+                        child: Text(
+                          'Criar conta',
+                          style: TextStyle(color: Colors.white),
                         ),
                       ),
                     ),
-                  ),
-                ),
-                // Already have an account? Go to Login
-                Positioned(
-                  left: 32,
-                  top: 629,
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text(
-                      'Já tem conta? Faça o Login',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w300,
-                        fontSize: 16,
-                        color: Color(0xFF646464),
-                      ),
+
+                  ]
                     ),
-                  ),
+                        ),
                 ),
-                // Preci Text
-                Positioned(
-                  left: 32,
-                  top: 676,
-                  child: Text(
-                    'Preci',
-                    style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w700,
-                      fontSize: 28,
-                      color: Color(0xFFE29942),
-                    ),
-                  ),
-                ),
-                // Ficando Text
-                Positioned(
-                  left: 32,
-                  top: 702,
-                  child: Text(
-                    'Ficando',
-                    style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w700,
-                      fontSize: 22,
-                      color: Color(0xFF3F53BE),
-                    ),
-                  ),
-                ),
-              ],
+          ),
+        ),
+        // Already have an account? Go to Login
+        Positioned(
+          left: 32,
+          top: 700,
+          child: GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Text(
+              'Já tem conta? Faça o Login',
+              style: TextStyle(
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w300,
+                fontSize: 16,
+                color: Color(0xFF646464),
+              ),
             ),
           ),
         ),
+        // Preci Text
+        Positioned(
+          left: 32,
+          top: 775,
+          child: Text(
+            'Preci',
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w700,
+              fontSize: 28,
+              color: Color(0xFFE29942),
+            ),
+          ),
+        ),
+        // Ficando Text
+        Positioned(
+          left: 32,
+          top: 800,
+          child: Text(
+            'Ficando',
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w700,
+              fontSize: 22,
+              color: Color(0xFF3F53BE),
+            ),
+          ),
+        ),
+        ],
       ),
+    ),
+    ),
+    ),
     );
   }
 
@@ -361,12 +409,19 @@ class RegisterPageState extends State<RegisterPage> {
     final username = usernameController.text.trim();
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
+    final passwordConf = passwordConfirmController.text.trim();
     final cep = cepController.text.trim();
     final cpf = cpfController.text.trim();
+    final birthDate = birthDateController.text.trim();
+
 
     final user = ParseUser.createUser(username, password, email);
 
-    user.set<String>('cep', cep);
+    if (password != passwordConf) {
+      showError("As senhas não coincidem.");
+      return;
+    }
+
     user.set<String>('cpf', cpf);
 
     var response = await user.signUp();
@@ -374,7 +429,13 @@ class RegisterPageState extends State<RegisterPage> {
     if (response.success) {
       showSuccess();
     } else {
-      showError(response.error!.message);
+      String errorMessage = response.error!.message ?? "Erro desconhecido";
+
+      if (errorMessage.toLowerCase().contains("email")) {
+        showError("O email fornecido é inválido.");
+      } else {
+        showError(errorMessage);
+      }
     }
   }
 }
