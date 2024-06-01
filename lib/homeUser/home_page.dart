@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:flora/perfil/profile_page.dart';
-import 'package:flora/graficos/dashbord.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -9,35 +9,48 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
+  String _username = "Usuário";
+  String _companyName = "Nome da Empresa";
 
   static List<Widget> _widgetOptions = <Widget>[
     MyHomePage(), // Página inicial (Home)
     ProfilePage(), // Página do perfil
   ];
 
-  void _onItemTapped(int index) {
-    setState(() {
-      if (index == 1) {
-        // Se o índice for 1 (ou seja, o item "Finanças" foi selecionado)
-        // Navegue para a tela de RelatoriosScreen
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => RelatoriosScreen()),
-        );
-      } else if (index == 2) {
-        // Se o índice for 2 (ou seja, o item "Perfil" foi selecionado)
-        // Navegue para a tela de ProfilePage
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => ProfilePage()),
-        );
-      } else {
-        _selectedIndex = index;
-      }
-    });
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserData();
   }
 
-  // Função para retornar o ícone envolvido em um contêiner com o rótulo
+  Future<void> _fetchUserData() async {
+    final user = await ParseUser.currentUser() as ParseUser?;
+    if (user != null) {
+      setState(() {
+        _username = user.username!;
+        _companyName = user.get<String>('companyName') ?? 'Nome da Empresa';
+      });
+    }
+  }
+
+  void _onItemTapped(int index) async {
+    if (index == 2) {
+      final newCompanyName = await Navigator.push<String>(
+        context,
+        MaterialPageRoute(builder: (context) => ProfilePage()),
+      );
+      if (newCompanyName != null) {
+        setState(() {
+          _companyName = newCompanyName;
+        });
+      }
+    } else {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
+  }
+
   Widget _buildIconWithLabel(IconData icon, bool isSelected) {
     return Container(
       width: 50,
@@ -67,7 +80,6 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       body: Stack(
         children: [
-          // Container centralizado que ocupa toda a tela
           Positioned.fill(
             child: Container(
               color: Colors.transparent,
@@ -91,7 +103,6 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
           ),
-          // Foto de perfil, nome e nome da empresa no canto superior esquerdo com background
           Positioned(
             top: 0,
             left: 0,
@@ -122,7 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Flora Matos',
+                        _username,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,
@@ -130,7 +141,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                       Text(
-                        'Empresa XYZ',
+                        _companyName,
                         style: TextStyle(
                           color: Colors.white70,
                           fontSize: 14,
@@ -142,13 +153,10 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
           ),
-          // Modal flutuante com informações de título e descrição (Precificação)
         ],
       ),
-      // FAB Menu
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
-          // Defina o estilo do texto para as labels do BottomNavigationBar
           textTheme: Theme.of(context).textTheme.copyWith(
                 caption: TextStyle(color: Colors.white),
               ),
