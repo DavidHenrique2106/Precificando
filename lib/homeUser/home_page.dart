@@ -7,195 +7,163 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _selectedIndex = 0; // Índice da página selecionada
-  bool isFABOpen = false;
-  bool isDarkened = false;
+  int _selectedIndex = 0;
 
-  // Páginas a serem exibidas no BottomNavigationBar
   static List<Widget> _widgetOptions = <Widget>[
     MyHomePage(), // Página inicial (Home)
     ProfilePage(), // Página do perfil
   ];
 
-  // Função para alternar entre as páginas ao clicar nos itens da barra de navegação
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color.fromRGBO(114, 133, 202, 1),
-      body: Stack(
+  // Função para retornar o ícone envolvido em um contêiner com o rótulo
+  Widget _buildIconWithLabel(IconData icon, bool isSelected) {
+    return Container(
+      width: 50,
+      height: 50,
+      alignment: Alignment.bottomCenter,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color:
+            isSelected ? Color.fromRGBO(226, 153, 66, 1) : Colors.transparent,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            width: double.infinity,
-            height: double.infinity,
-            decoration: BoxDecoration(
-              color: Color.fromRGBO(114, 133, 202, 1),
-            ),
+          Icon(
+            icon,
+            size: 35,
+            color: isSelected ? Colors.white : Colors.black,
           ),
-          // Foto de perfil, nome e nome da empresa no canto superior esquerdo
-          Positioned(
-            top: 40,
-            left: 20,
-            child: Row(
-              children: [
-                Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.grey,
-                  ),
-                  child: Icon(
-                    Icons.person,
-                    color: Colors.white,
-                    size: 40,
-                  ),
-                ),
-                SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Flora Matos',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      'Empresa XYZ',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          // Modal flutuante com informações de título e descrição (Precificação)
-          AnimatedOpacity(
-            opacity: isDarkened ? 0.7 : 0.0,
-            duration: Duration(milliseconds: 200),
-            child: GestureDetector(
-              onTap: () {}, // Evento para fechar os modais
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                color: Colors.black,
-              ),
-            ),
-          ),
+          SizedBox(height: 4),
         ],
-      ),
-      // FAB Menu
-      floatingActionButton: Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).size.height * 0.03,
-          left: MediaQuery.of(context).size.width * 0.05,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Visibility(
-              visible: isFABOpen,
-              child: Container(
-                child: Column(
-                  children: [
-                    // Adicione os FABs conforme necessário
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.022),
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.16,
-              height: MediaQuery.of(context).size.width * 0.16,
-              child: FloatingActionButton(
-                onPressed: () {
-                  setState(() {
-                    isFABOpen = !isFABOpen;
-                  });
-                },
-                child: Icon(
-                  isFABOpen ? Icons.close : Icons.add,
-                  size: MediaQuery.of(context).size.width * 0.08,
-                  color: Color.fromRGBO(217, 217, 217, 1),
-                ),
-                backgroundColor: Color.fromRGBO(77, 91, 174, 1),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                      MediaQuery.of(context).size.width * 0.08),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-      floatingActionButtonLocation:
-          FloatingActionButtonLocation.miniCenterDocked,
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Color.fromRGBO(217, 217, 217, 1),
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Perfil',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Color.fromRGBO(77, 91, 174, 1),
-        onTap: _onItemTapped,
       ),
     );
   }
 
-  // Método para construir o modal flutuante
-  Widget _buildModal(String title, String description) {
-    return Container(
-      width: MediaQuery.of(context).size.width * 0.4,
-      padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black26,
-            blurRadius: 10,
-            offset: Offset(0, 4),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        children: [
+          // Container centralizado que ocupa toda a tela
+          Positioned.fill(
+            child: Container(
+              color: Colors.transparent,
+              child: Center(
+                child: Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  color: Colors.white,
+                  child: Center(
+                    child: Text(
+                      'Container Centralizado',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
+          // Foto de perfil, nome e nome da empresa no canto superior esquerdo com background
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              padding: EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                color: Color.fromRGBO(114, 133, 202, 1),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 100,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.grey,
+                    ),
+                    child: Icon(
+                      Icons.person,
+                      color: Colors.white,
+                      size: 40,
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Flora Matos',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        'Empresa XYZ',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          // Modal flutuante com informações de título e descrição (Precificação)
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Color.fromRGBO(77, 91, 174, 1),
-            ),
+      // FAB Menu
+      bottomNavigationBar: Theme(
+        data: Theme.of(context).copyWith(
+          // Defina o estilo do texto para as labels do BottomNavigationBar
+          textTheme: Theme.of(context).textTheme.copyWith(
+                caption: TextStyle(color: Colors.white),
+              ),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16.0),
+            topRight: Radius.circular(16.0),
           ),
-          SizedBox(height: 5),
-          Text(
-            description,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.black54,
-            ),
+          child: BottomNavigationBar(
+            backgroundColor: Color.fromRGBO(114, 133, 202, 1),
+            items: <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: _buildIconWithLabel(Icons.home, _selectedIndex == 0),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: _buildIconWithLabel(
+                  Icons.currency_exchange_outlined,
+                  _selectedIndex == 1,
+                ),
+                label: 'Finanças',
+              ),
+              BottomNavigationBarItem(
+                icon: _buildIconWithLabel(Icons.person, _selectedIndex == 2),
+                label: 'Perfil',
+              ),
+            ],
+            currentIndex: _selectedIndex,
+            onTap: _onItemTapped,
           ),
-        ],
+        ),
       ),
     );
   }
