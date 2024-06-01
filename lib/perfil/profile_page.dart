@@ -15,8 +15,8 @@ class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController _companyNameController = TextEditingController();
   String _username = "Usuário";
   String _companyName = "Nome da Empresa";
-  String _email = "user@example.com"; // Placeholder email
-  String _password = "********"; // Placeholder password
+  String _email = "user@example.com";
+  String _password = "********";
 
   Future<void> _pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
@@ -67,7 +67,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   _username = _newUsernameController.text;
                 });
                 Navigator.of(context).pop();
-                _updateUserDetails(); // Save changes to Parse server
+                _updateUserDetails();
               },
               child: Text('Confirmar'),
             ),
@@ -105,9 +105,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 setState(() {
                   _companyName = _newCompanyNameController.text;
                 });
-                Navigator.of(context).pop(
-                    _companyName); // Retorna o novo nome da empresa para a página anterior
-                _updateUserDetails(); // Salva as alterações no servidor Parse
+                Navigator.of(context).pop(_companyName);
+                _updateUserDetails();
               },
               child: Text('Confirmar'),
             ),
@@ -136,6 +135,7 @@ class _ProfilePageState extends State<ProfilePage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text('Email: $_email'),
+              Divider(),
               Text('Senha: $_password'),
             ],
           ),
@@ -159,6 +159,7 @@ class _ProfilePageState extends State<ProfilePage> {
         _username = user.username!;
         _email = user.emailAddress!;
         _companyName = user.get<String>('companyName') ?? 'Nome da Empresa';
+        _password = user.password ?? '********';
       });
     }
   }
@@ -166,7 +167,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    _fetchCredentials(); // Fetch credentials when the page is initialized
+    _fetchCredentials();
   }
 
   @override
@@ -174,79 +175,85 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Perfil'),
+        backgroundColor: Color.fromRGBO(114, 133, 202, 1),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            SizedBox(height: 20),
-            Center(
-              child: GestureDetector(
-                onTap: _pickImage,
-                child: CircleAvatar(
-                  radius: 50,
-                  backgroundImage: _image != null ? FileImage(_image!) : null,
-                  child:
-                      _image == null ? Icon(Icons.add_a_photo, size: 50) : null,
+      body: Container(
+        color: Color.fromRGBO(114, 133, 202, 1),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SizedBox(height: 20),
+              Center(
+                child: GestureDetector(
+                  onTap: _pickImage,
+                  child: CircleAvatar(
+                    radius: 50,
+                    backgroundImage: _image != null ? FileImage(_image!) : null,
+                    child: _image == null
+                        ? Icon(Icons.add_a_photo, size: 50)
+                        : null,
+                  ),
                 ),
               ),
-            ),
-            SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: _pickImage,
-              child: Text('Escolher Foto'),
-            ),
-            SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    _username,
-                    style: TextStyle(fontSize: 18),
+              SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: _pickImage,
+                child: Text('Escolher Foto'),
+              ),
+              SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      _username,
+                      style: TextStyle(fontSize: 18, color: Colors.white),
+                    ),
                   ),
-                ),
-                IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: _editUsername,
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    _companyName,
-                    style: TextStyle(fontSize: 18),
+                  IconButton(
+                    icon: Icon(Icons.edit, color: Colors.white),
+                    onPressed: _editUsername,
                   ),
-                ),
-                IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: _editCompanyName,
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    'Minhas Credenciais',
-                    style: TextStyle(fontSize: 18),
+                ],
+              ),
+              Divider(color: Colors.white),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      _companyName,
+                      style: TextStyle(fontSize: 18, color: Colors.white),
+                    ),
                   ),
-                ),
-                IconButton(
-                  icon: Icon(Icons.visibility),
-                  onPressed: _showCredentials,
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _logout,
-              child: Text('Sair / Alterar Conta'),
-            ),
-          ],
+                  IconButton(
+                    icon: Icon(Icons.edit, color: Colors.white),
+                    onPressed: _editCompanyName,
+                  ),
+                ],
+              ),
+              Divider(color: Colors.white),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Minhas Credenciais',
+                      style: TextStyle(fontSize: 18, color: Colors.white),
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.visibility, color: Colors.white),
+                    onPressed: _showCredentials,
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _logout,
+                child: Text('Sair / Alterar Conta'),
+              ),
+            ],
+          ),
         ),
       ),
     );
