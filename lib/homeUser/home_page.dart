@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flora/perfil/profile_page.dart';
+import 'package:flora/homeUser/cardapio_screen.dart';
 import 'package:flora/ingredientes/model/IngredientsPage.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -7,322 +9,443 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int currentTab = 0;
-  bool isFABOpen = false;
-  bool isDarkened = false;
+  int _selectedIndex = 0;
 
-  void showFABMenu() {
+  static List<Widget> _widgetOptions = <Widget>[
+    MyHomePage(), // Página inicial (Home)
+    ProfilePage(), // Página do perfil
+  ];
+
+  void _onItemTapped(int index) {
     setState(() {
-      isFABOpen = true;
-      isDarkened = true;
+      if (index == 1) {
+        // Lógica para index 1, se necessário
+      } else if (index == 2) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ProfilePage()),
+        );
+      } else {
+        _selectedIndex = index;
+      }
     });
   }
 
-  void closeFABMenu() {
-    setState(() {
-      isFABOpen = false;
-      isDarkened = false;
-    });
+  Widget _buildIconWithLabel(IconData icon, bool isSelected) {
+    return Container(
+      width: 50,
+      height: 50,
+      alignment: Alignment.bottomCenter,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color:
+            isSelected ? Color.fromRGBO(226, 153, 66, 1) : Colors.transparent,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            size: 35,
+            color: isSelected ? Colors.white : Colors.black,
+          ),
+          SizedBox(height: 4),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromRGBO(114, 133, 202, 1),
-      body: Stack(
-        children: [
-          Container(
-            width: double.infinity,
-            height: double.infinity,
-            decoration: BoxDecoration(
-              color: Color.fromRGBO(114, 133, 202, 1),
-            ),
-          ),
-          Align(
-            alignment: Alignment(0.0, -0.7),
-            child: Container(
-              width: MediaQuery.of(context).size.width * 0.9,
-              height: MediaQuery.of(context).size.height * 0.40,
+      backgroundColor: Color(0xffe3e3e3),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              padding: EdgeInsets.all(8.0),
               decoration: BoxDecoration(
-                color: Color.fromRGBO(217, 217, 217, 1),
-                borderRadius: BorderRadius.circular(12),
-                border: Border(
-                  top: BorderSide(width: 1, color: Colors.black),
-                ),
+                color: Color.fromRGBO(114, 133, 202, 1),
               ),
-              child: Padding(
-                padding: EdgeInsets.only(
-                  top: MediaQuery.of(context).size.height * 0.2 * 0.15,
-                  bottom: MediaQuery.of(context).size.height * 0.2 * 0.2,
-                  left: MediaQuery.of(context).size.width * 0.40 * 0.1,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 100,
+                    height: 150,
+                    child: Icon(
+                      Icons.person,
+                      color: Colors.white,
+                      size: 40,
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Flora Matos',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        'Empresa XYZ',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 10),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: Stack(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                        color: Color.fromRGBO(226, 153, 66, 1),
+                        width: 3.0,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: EdgeInsets.all(16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          width: MediaQuery.of(context).size.width * 0.9 * 0.3,
-                          height: MediaQuery.of(context).size.width * 0.9 * 0.3,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
+                        Flexible(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Bem-vindo',
+                                style: TextStyle(
+                                  color: Color.fromRGBO(114, 133, 202, 1),
+                                  fontSize: 33,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                'Precificando te ajuda na gestão de alimentos seu restaurante',
+                                style: TextStyle(
+                                  color: Color.fromRGBO(114, 133, 202, 1),
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.start,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                              ),
+                            ],
                           ),
                         ),
-                        SizedBox(width: 10),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Flora Matos',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: MediaQuery.of(context).size.width *
-                                    0.8 *
-                                    0.07,
-                              ),
-                            ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height *
-                                  0.2 *
-                                  0.01,
-                            ),
-                            Text(
-                              'Conta Diamante',
-                              style: TextStyle(
-                                color: Color.fromRGBO(128, 111, 111, 1),
-                                fontSize: MediaQuery.of(context).size.width *
-                                    0.8 *
-                                    0.048,
-                              ),
-                            ),
-                          ],
+                        SizedBox(width: 20),
+                        Icon(
+                          Icons.store,
+                          color: Color.fromRGBO(226, 153, 66, 1),
+                          size: 100,
                         ),
                       ],
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                        top: MediaQuery.of(context).size.height * 0.2 * 0.12,
-                      ),
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.8 * 0.6,
-                        height: MediaQuery.of(context).size.height * 0.2 * 0.30,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Olá, Mundo!',
-                              style: TextStyle(
-                                color: Color(0xfff8f8f8),
-                                fontSize: MediaQuery.of(context).size.width *
-                                    0.8 *
-                                    0.065,
-                                fontWeight: FontWeight.normal,
-                              ),
-                            ),
-                          ],
-                        ),
-                        decoration: BoxDecoration(
-                          color: Color.fromRGBO(114, 133, 202, 1),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border(
-                            top: BorderSide(
-                              width: 1,
-                              color: Color(0xffd4d4d4),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(
-              top: MediaQuery.of(context).size.height * 0.55,
-              left: 1,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                      left: MediaQuery.of(context).size.width * 0.1),
-                  child: Text(
-                    'Atividades Recentes             ------',
+            SizedBox(height: 10),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Serviços',
                     style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.width * 0.05,
+                      color: Color.fromRGBO(114, 133, 202, 1),
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.05),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.2,
-                      height: MediaQuery.of(context).size.height * 0.1,
-                      color: Color.fromRGBO(217, 217, 217, 1),
-                    ),
-                    SizedBox(width: MediaQuery.of(context).size.width * 0.08),
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.2,
-                      height: MediaQuery.of(context).size.height * 0.1,
-                      color: Color.fromRGBO(217, 217, 217, 1),
-                    ),
-                    SizedBox(width: MediaQuery.of(context).size.width * 0.08),
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.2,
-                      height: MediaQuery.of(context).size.height * 0.1,
-                      color: Color.fromRGBO(217, 217, 217, 1),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          AnimatedOpacity(
-            opacity: isDarkened ? 0.7 : 0.0,
-            duration: Duration(milliseconds: 200),
-            child: GestureDetector(
-              onTap: closeFABMenu,
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                color: Colors.black,
+                ],
               ),
             ),
-          ),
-        ],
-      ),
-      floatingActionButton: Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).size.height * 0.03,
-          left: MediaQuery.of(context).size.width * 0.05,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Visibility(
-              visible: isFABOpen,
-              child: Container(
-                child: Column(
-                  children: [
-                    SizedBox(
+            SizedBox(height: 10),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => IngredientListPage(),
+                        ),
+                      );
+                    },
+                    child: Container(
                       width: MediaQuery.of(context).size.width * 0.4,
-                      height: MediaQuery.of(context).size.width * 0.14,
-                      child: FloatingActionButton(
-                        onPressed: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => IngredientListPage()),
-                          );
-                        },
-                        backgroundColor: Color.fromRGBO(77, 91, 174, 1),
-                        child: Text(
-                          "Ingredientes",
-                          style: TextStyle(
-                            color: Color.fromRGBO(255, 255, 255, 1),
-                            fontSize: MediaQuery.of(context).size.width * 0.055,
-                          ),
+                      height: 115,
+                      padding: EdgeInsets.all(16.0),
+                      decoration: BoxDecoration(
+                        color: Color.fromRGBO(226, 153, 66, 1),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Color.fromRGBO(114, 133, 202, 1),
+                          width: 2.0,
                         ),
                       ),
-                    ),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.4,
-                      height: MediaQuery.of(context).size.width * 0.14,
-                      child: FloatingActionButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/cardapio');
-                        },
-                        backgroundColor: Color.fromRGBO(77, 91, 174, 1),
-                        child: Text(
-                          "Cardápio",
-                          style: TextStyle(
-                            color: Color.fromRGBO(255, 255, 255, 1),
-                            fontSize: MediaQuery.of(context).size.width * 0.055,
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.restaurant_menu,
+                            color: Colors.white,
+                            size: 50,
                           ),
-                        ),
+                          Text(
+                            'Ingredientes',
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.start,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProductListPage(),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.4,
+                      height: 115,
+                      padding: EdgeInsets.all(16.0),
+                      decoration: BoxDecoration(
+                        color: Color.fromRGBO(114, 133, 202, 1),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Color.fromRGBO(226, 153, 66, 1),
+                          width: 2.0,
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.shopping_bag,
+                            color: Colors.white,
+                            size: 50,
+                          ),
+                          Text(
+                            'Produtos',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.022),
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.16,
-              height: MediaQuery.of(context).size.width * 0.16,
-              child: FloatingActionButton(
-                onPressed: () {
-                  if (!isFABOpen) {
-                    showFABMenu();
-                  } else {
-                    closeFABMenu();
-                  }
+            SizedBox(height: 10),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Planos',
+                    style: TextStyle(
+                      color: Color.fromRGBO(114, 133, 202, 1),
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 10),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: GestureDetector(
+                onTap: () {
+                  /*Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => IngredientListPage(),
+                      ),
+                    );**/
                 },
-                child: Icon(
-                  isFABOpen ? Icons.close : Icons.add,
-                  size: MediaQuery.of(context).size.width * 0.08,
-                  color: Color.fromRGBO(217, 217, 217, 1),
-                ),
-                backgroundColor: Color.fromRGBO(77, 91, 174, 1),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                      MediaQuery.of(context).size.width * 0.08),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 140,
+                  padding: EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    color: Color.fromRGBO(114, 133, 202, 1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Color.fromRGBO(226, 153, 66, 1),
+                      width: 2.0,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.badge,
+                        color: Colors.white,
+                        size: 50,
+                      ),
+                      SizedBox(
+                          width: 10), // Espaçamento entre o ícone e o texto
+                      Expanded(
+                        child: Text(
+                          'Conheça nos planos de consultoria de negócios.',
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.start,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
+            SizedBox(height: 20),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Conheça o App e Dicas',
+                    style: TextStyle(
+                      color: Color.fromRGBO(114, 133, 202, 1),
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 20),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: GestureDetector(
+                onTap: () {
+                  /*Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => IngredientListPage(),
+                      ),
+                    );**/
+                },
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 140,
+                  padding: EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    color: Color.fromRGBO(226, 153, 66, 1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Color.fromRGBO(114, 133, 202, 1),
+                      width: 2.0,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Aprenda a navegar pelo app e veja nossas dicas na redes',
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.start,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                        ),
+                      ),
+                      Icon(
+                        Icons.map,
+                        color: Colors.white,
+                        size: 60,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 20),
           ],
         ),
       ),
-      floatingActionButtonLocation:
-          FloatingActionButtonLocation.miniCenterDocked,
-      bottomNavigationBar: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height * 0.07,
+      bottomNavigationBar: Theme(
+        data: Theme.of(context).copyWith(
+          textTheme: Theme.of(context).textTheme.copyWith(
+                caption: TextStyle(color: Colors.white),
+              ),
+        ),
         child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20.0),
-            topRight: Radius.circular(20.0),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16.0),
+            topRight: Radius.circular(16.0),
           ),
-          child: Container(
-            height: MediaQuery.of(context).size.height * 0.078,
-            color: Color.fromRGBO(217, 217, 217, 1),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                IconButton(
-                  icon: Icon(
-                    Icons.home,
-                    size: MediaQuery.of(context).size.width * 0.14,
-                    color: Color.fromRGBO(77, 91, 174, 1),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      currentTab = 0;
-                    });
-                  },
+          child: BottomNavigationBar(
+            backgroundColor: Color.fromRGBO(114, 133, 202, 1),
+            items: <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: _buildIconWithLabel(Icons.home, _selectedIndex == 0),
+                label: 'Home',
+                backgroundColor: Colors.white,
+              ),
+              BottomNavigationBarItem(
+                icon: _buildIconWithLabel(
+                  Icons.currency_exchange_outlined,
+                  _selectedIndex == 1,
                 ),
-                SizedBox(width: MediaQuery.of(context).size.width * 0.14),
-                IconButton(
-                  icon: Icon(
-                    Icons.person,
-                    size: MediaQuery.of(context).size.width * 0.14,
-                    color: Color.fromRGBO(77, 91, 174, 1),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      currentTab = 0;
-                    });
-                  },
-                ),
-              ],
-            ),
+                label: 'Finanças',
+                backgroundColor: Colors.white,
+              ),
+              BottomNavigationBarItem(
+                icon: _buildIconWithLabel(Icons.person, _selectedIndex == 2),
+                label: 'Perfil',
+                backgroundColor: Colors.white,
+              ),
+            ],
+            selectedItemColor: Colors.white,
+            unselectedItemColor: Colors.white,
+            currentIndex: _selectedIndex,
+            onTap: _onItemTapped,
           ),
         ),
       ),
