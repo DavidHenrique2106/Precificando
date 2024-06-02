@@ -1,8 +1,6 @@
-// lib/telas/AddProductPage.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flora/ingredientes/model/IngredientsPage.dart';
-import 'package:flora/ingredientes/model/AddIngredientPage.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 class Ingredient {
   final String name;
@@ -13,20 +11,32 @@ class Ingredient {
 }
 
 class AddProductPage extends StatefulWidget {
-  final List<Ingredient>? ingredients; // Tornando a lista opcional
-
-  AddProductPage({this.ingredients}); // Removendo o required
-
   @override
   _AddProductPageState createState() => _AddProductPageState();
 }
 
 class _AddProductPageState extends State<AddProductPage> {
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController totalCostPriceController =
-      TextEditingController();
-
+  final TextEditingController totalCostPriceController = TextEditingController();
+  List<ParseObject> ingredients = [];
   Map<String, Map<String, dynamic>> selectedIngredients = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _loadIngredients();
+  }
+
+  Future<void> _loadIngredients() async {
+    QueryBuilder<ParseObject> queryIngredients = QueryBuilder<ParseObject>(ParseObject('Ingredients'));
+    final ParseResponse apiResponse = await queryIngredients.query();
+
+    if (apiResponse.success && apiResponse.results != null) {
+      setState(() {
+        ingredients = apiResponse.results as List<ParseObject>;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,29 +61,32 @@ class _AddProductPageState extends State<AddProductPage> {
             ),
             SizedBox(height: 16.0),
             Expanded(
-              child: ListView(
-                children: (widget.ingredients ?? []).map((ingredient) {
+              child: ListView.builder(
+                itemCount: ingredients.length,
+                itemBuilder: (context, index) {
+                  final ingredient = ingredients[index];
+                  final ingredientName = ingredient.get<String>('name') ?? 'No Name';
                   return Column(
                     children: [
                       CheckboxListTile(
-                        title: Text(ingredient.name),
-                        value: selectedIngredients.containsKey(ingredient.name),
+                        title: Text(ingredientName),
+                        value: selectedIngredients.containsKey(ingredientName),
                         onChanged: (bool? value) {
                           if (value != null) {
                             setState(() {
                               if (value) {
-                                selectedIngredients[ingredient.name] = {
+                                selectedIngredients[ingredientName] = {
                                   'unit': 'g',
                                   'amount': 0
                                 };
                               } else {
-                                selectedIngredients.remove(ingredient.name);
+                                selectedIngredients.remove(ingredientName);
                               }
                             });
                           }
                         },
                       ),
-                      if (selectedIngredients.containsKey(ingredient.name))
+                      if (selectedIngredients.containsKey(ingredientName))
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16.0),
                           child: Column(
@@ -92,8 +105,8 @@ class _AddProductPageState extends State<AddProductPage> {
                                       ],
                                       onChanged: (value) {
                                         setState(() {
-                                          selectedIngredients[ingredient.name]![
-                                                  'amount'] =
+                                          selectedIngredients[ingredientName]![
+                                          'amount'] =
                                               int.tryParse(value) ?? 0;
                                         });
                                       },
@@ -102,23 +115,23 @@ class _AddProductPageState extends State<AddProductPage> {
                                   SizedBox(width: 16.0),
                                   DropdownButton<String>(
                                     value: selectedIngredients[
-                                        ingredient.name]!['unit'],
+                                    ingredientName]!['unit'],
                                     onChanged: (String? newValue) {
                                       if (newValue != null) {
                                         setState(() {
-                                          selectedIngredients[ingredient.name]![
-                                              'unit'] = newValue;
+                                          selectedIngredients[ingredientName]![
+                                          'unit'] = newValue;
                                         });
                                       }
                                     },
                                     items: <String>['g', 'ml']
                                         .map<DropdownMenuItem<String>>(
                                             (String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Text(value),
-                                      );
-                                    }).toList(),
+                                          return DropdownMenuItem<String>(
+                                            value: value,
+                                            child: Text(value),
+                                          );
+                                        }).toList(),
                                   ),
                                 ],
                               ),
@@ -127,7 +140,7 @@ class _AddProductPageState extends State<AddProductPage> {
                         ),
                     ],
                   );
-                }).toList(),
+                },
               ),
             ),
             SizedBox(height: 16.0),
@@ -137,10 +150,10 @@ class _AddProductPageState extends State<AddProductPage> {
                 String product = '$name - Ingredientes:\n';
                 selectedIngredients.forEach((ingredient, details) {
                   product +=
-                      '$ingredient: ${details['amount']}${details['unit']}\n';
+                  '$ingredient: ${details['amount']}${details['unit']}\n';
                 });
                 product +=
-                    'Preço de Venda: R\$${totalCostPriceController.text}';
+                'Preço de Venda: R\$${totalCostPriceController.text}';
                 Navigator.pop(context, product);
               },
               child: Text('Adicionar Produto'),

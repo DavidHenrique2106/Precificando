@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flora/perfil/profile_page.dart';
-
 import 'package:flora/homeUser/cardapio_screen.dart';
 import 'package:flora/ingredientes/model/IngredientsPage.dart';
 
@@ -177,7 +176,7 @@ class _MyHomePageState extends State<MyHomePage> {
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
           textTheme: Theme.of(context).textTheme.copyWith(
-                caption: TextStyle(color: Colors.white),
+                bodySmall: TextStyle(color: Colors.white),
               ),
         ),
         child: ClipRRect(
