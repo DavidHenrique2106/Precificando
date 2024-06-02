@@ -2,14 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
-class Ingredient {
-  final String name;
-  final double quantity;
-  final double costPrice;
-
-  Ingredient(this.name, this.quantity, this.costPrice);
-}
-
 class AddProductPage extends StatefulWidget {
   @override
   _AddProductPageState createState() => _AddProductPageState();
@@ -35,6 +27,29 @@ class _AddProductPageState extends State<AddProductPage> {
       setState(() {
         ingredients = apiResponse.results as List<ParseObject>;
       });
+    }
+  }
+
+  Future<void> _saveProduct() async {
+    final name = nameController.text;
+    final totalCostPrice = totalCostPriceController.text;
+
+    if (name.isEmpty || totalCostPrice.isEmpty) {
+      // Mostrar mensagem de erro
+      return;
+    }
+
+    final product = ParseObject('Products')
+      ..set('name', name)
+      ..set('totalCostPrice', double.tryParse(totalCostPrice) ?? 0.0)
+      ..set('ingredients', selectedIngredients);
+
+    final response = await product.save();
+
+    if (response.success) {
+      Navigator.pop(context, true);
+    } else {
+      // Mostrar mensagem de erro
     }
   }
 
@@ -145,17 +160,7 @@ class _AddProductPageState extends State<AddProductPage> {
             ),
             SizedBox(height: 16.0),
             ElevatedButton(
-              onPressed: () {
-                String name = nameController.text;
-                String product = '$name - Ingredientes:\n';
-                selectedIngredients.forEach((ingredient, details) {
-                  product +=
-                  '$ingredient: ${details['amount']}${details['unit']}\n';
-                });
-                product +=
-                'Preço de Venda: R\$${totalCostPriceController.text}';
-                Navigator.pop(context, product);
-              },
+              onPressed: _saveProduct,
               child: Text('Adicionar Produto'),
             ),
           ],
