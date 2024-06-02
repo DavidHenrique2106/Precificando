@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flora/perfil/profile_page.dart';
-import 'package:flora/graficos/dashbord.dart';
+
 import 'package:flora/homeUser/cardapio_screen.dart';
 import 'package:flora/ingredientes/model/IngredientsPage.dart';
 
@@ -20,10 +20,6 @@ class _MyHomePageState extends State<MyHomePage> {
   void _onItemTapped(int index) {
     setState(() {
       if (index == 1) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => RelatoriosScreen()),
-        );
       } else if (index == 2) {
         Navigator.push(
           context,
