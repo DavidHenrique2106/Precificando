@@ -59,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
 
-      backgroundColor: Color(0xffe3e3e3),
+      backgroundColor: Color(0xffdbdbdb),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
