@@ -423,6 +423,7 @@ class RegisterPageState extends State<RegisterPage> {
     }
 
     user.set<String>('cpf', cpf);
+    user.set<String>('cep', cep);
 
     var response = await user.signUp();
 
