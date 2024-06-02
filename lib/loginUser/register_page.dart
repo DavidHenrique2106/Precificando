@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
+import 'package:flora/loginUser/login_page.dart';
 import 'package:http/http.dart' as http;
 
 class RegisterPage extends StatefulWidget {
