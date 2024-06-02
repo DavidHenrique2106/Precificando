@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'package:flora/perfil/profile_page.dart';
+import 'package:flora/graficos/dashbord.dart';
+import 'package:flora/homeUser/cardapio_screen.dart';
+import 'package:flora/ingredientes/model/IngredientsPage.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -9,46 +11,28 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
-  String _username = "Usuário";
-  String _companyName = "Nome da Empresa";
 
   static List<Widget> _widgetOptions = <Widget>[
     MyHomePage(), // Página inicial (Home)
     ProfilePage(), // Página do perfil
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    _fetchUserData();
-  }
-
-  Future<void> _fetchUserData() async {
-    final user = await ParseUser.currentUser() as ParseUser?;
-    if (user != null) {
-      setState(() {
-        _username = user.username!;
-        _companyName = user.get<String>('companyName') ?? 'Nome da Empresa';
-      });
-    }
-  }
-
-  void _onItemTapped(int index) async {
-    if (index == 2) {
-      final newCompanyName = await Navigator.push<String>(
-        context,
-        MaterialPageRoute(builder: (context) => ProfilePage()),
-      );
-      if (newCompanyName != null) {
-        setState(() {
-          _companyName = newCompanyName;
-        });
-      }
-    } else {
-      setState(() {
+  void _onItemTapped(int index) {
+    setState(() {
+      if (index == 1) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => RelatoriosScreen()),
+        );
+      } else if (index == 2) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ProfilePage()),
+        );
+      } else {
         _selectedIndex = index;
-      });
-    }
+      }
+    });
   }
 
   Widget _buildIconWithLabel(IconData icon, bool isSelected) {
@@ -89,14 +73,53 @@ class _MyHomePageState extends State<MyHomePage> {
                   height: double.infinity,
                   color: Colors.white,
                   child: Center(
-                    child: Text(
-                      'Container Centralizado',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Container Centralizado',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(
+                            height: 20), // Espaço entre o texto e os botões
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              icon: Icon(
+                                  Icons.restaurant_menu), // Ícone de cardápio
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          IngredientListPage()),
+                                );
+                                ; // Ação ao pressionar o botão de cardápio
+                              },
+                            ),
+                            SizedBox(width: 20), // Espaço entre os botões
+                            IconButton(
+                              icon:
+                                  Icon(Icons.shopping_bag), // Ícone de produto
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ProductListPage()),
+                                );
+
+                                // Ação ao pressionar o botão de produto
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -133,7 +156,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        _username,
+                        'Flora Matos',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,
@@ -141,7 +164,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                       Text(
-                        _companyName,
+                        'Empresa XYZ',
                         style: TextStyle(
                           color: Colors.white70,
                           fontSize: 14,
