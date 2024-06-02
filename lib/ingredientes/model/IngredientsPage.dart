@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'AddIngredientPage.dart';
 import 'EditIngredientPage.dart';
 import 'package:flora/homeUser/home_page.dart';
-import 'package:flora/graficos/dashbord.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 class IngredientListPage extends StatefulWidget {
   @override
@@ -10,7 +10,30 @@ class IngredientListPage extends StatefulWidget {
 }
 
 class _IngredientListPageState extends State<IngredientListPage> {
-  List<String> ingredients = [];
+  List<ParseObject> ingredients = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadIngredients();
+  }
+
+  Future<void> _loadIngredients() async {
+    QueryBuilder<ParseObject> queryIngredients = QueryBuilder<ParseObject>(ParseObject('Ingredients'));
+    final ParseResponse apiResponse = await queryIngredients.query();
+
+    if (apiResponse.success && apiResponse.results != null) {
+      setState(() {
+        ingredients = apiResponse.results as List<ParseObject>;
+      });
+    }
+  }
+
+  Future<void> _deleteIngredient(int index) async {
+    final ingredient = ingredients[index];
+    await ingredient.delete();
+    await _loadIngredients(); // Recarregar os ingredientes após deletar
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,8 +48,9 @@ class _IngredientListPageState extends State<IngredientListPage> {
       body: ListView.builder(
         itemCount: ingredients.length,
         itemBuilder: (context, index) {
+          final ingredient = ingredients[index];
           return ListTile(
-            title: Text(ingredients[index]),
+            title: Text(ingredient.get<String>('name') ?? 'No Name'),
             trailing: PopupMenuButton(
               itemBuilder: (context) => [
                 PopupMenuItem(
@@ -40,25 +64,18 @@ class _IngredientListPageState extends State<IngredientListPage> {
               ],
               onSelected: (value) {
                 if (value == 'edit') {
-                  // Navegar para a tela de edição do ingrediente
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          EditIngredientPage(index, ingredients),
+                      builder: (context) => EditIngredientPage(index, ingredients.cast()),
                     ),
                   ).then((value) {
-                    // Atualizar a lista de ingredientes com os novos valores após a edição
                     if (value != null) {
-                      setState(() {
-                        ingredients = value;
-                      });
+                      _loadIngredients();
                     }
                   });
                 } else if (value == 'delete') {
-                  setState(() {
-                    ingredients.removeAt(index);
-                  });
+                  _deleteIngredient(index);
                 }
               },
             ),
@@ -67,17 +84,13 @@ class _IngredientListPageState extends State<IngredientListPage> {
       ),
       floatingActionButton: Padding(
         padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).size.height *
-              0.03, // Posição vertical ajustável
-          left: MediaQuery.of(context).size.width *
-              0.05, // Preenchimento esquerdo ajustável
+          bottom: MediaQuery.of(context).size.height * 0.03,
+          left: MediaQuery.of(context).size.width * 0.05,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            SizedBox(
-                height: MediaQuery.of(context).size.height *
-                    0.022), // Espaço entre o botão flutuante e a animação
+            SizedBox(height: MediaQuery.of(context).size.height * 0.022),
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.16,
               height: MediaQuery.of(context).size.width * 0.16,
@@ -85,14 +98,11 @@ class _IngredientListPageState extends State<IngredientListPage> {
                 onPressed: () async {
                   final result = await Navigator.push(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) => AddIngredientPage()),
+                    MaterialPageRoute(builder: (context) => AddIngredientPage()),
                   );
 
-                  if (result != null) {
-                    setState(() {
-                      ingredients.add(result);
-                    });
+                  if (result != null && result == true) {
+                    await _loadIngredients();
                   }
                 },
                 child: Icon(
@@ -102,16 +112,14 @@ class _IngredientListPageState extends State<IngredientListPage> {
                 ),
                 backgroundColor: Color.fromRGBO(77, 91, 174, 1),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                      MediaQuery.of(context).size.width * 0.08),
+                  borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 0.08),
                 ),
               ),
             ),
           ],
         ),
       ),
-      floatingActionButtonLocation:
-          FloatingActionButtonLocation.miniCenterDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterDocked,
       bottomNavigationBar: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height * 0.07,
@@ -136,12 +144,12 @@ class _IngredientListPageState extends State<IngredientListPage> {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) => MyHomePage()),
-                    ); //adicione aqui o direcionamento para a página home
+                    );
                   },
                 ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 0.14,
-                ), // Espaçamento entre os ícones
+                ),
                 IconButton(
                   icon: Icon(
                     Icons.person,
@@ -150,11 +158,6 @@ class _IngredientListPageState extends State<IngredientListPage> {
                   ),
                   onPressed: () {
                     setState(() {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => RelatoriosScreen()),
-                      );
                       // Adicione aqui a ação desejada ao pressionar o ícone de perfil
                     });
                   },

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'cardapio_screen.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 class EditProductPage extends StatefulWidget {
-  final int index;
-  final List<String> products;
-  EditProductPage(this.index, this.products);
+  final ParseObject product;
+  final List<ParseObject> productList;
+
+  EditProductPage(this.product, this.productList);
+
   @override
   EditProductPageState createState() => EditProductPageState();
 }
@@ -16,16 +19,16 @@ class EditProductPageState extends State<EditProductPage> {
 
   double costPricePerUnit = 0.0;
   double totalCostPrice = 0.0;
+
   @override
   void initState() {
     super.initState();
-    List<String> productParts = widget.products[widget.index].split(' - ');
-    nameController = TextEditingController(text: productParts[0]);
-    quantityController = TextEditingController(text: productParts[1]);
-    totalCostPriceController =
-        TextEditingController(text: productParts[2].replaceAll(' ', ''));
+    nameController = TextEditingController(text: widget.product.get<String>('name') ?? '');
+    quantityController = TextEditingController(text: widget.product.get<String>('quantity') ?? '');
+    totalCostPriceController = TextEditingController(text: widget.product.get<String>('totalCostPrice') ?? '');
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -39,6 +42,11 @@ class EditProductPageState extends State<EditProductPage> {
             TextField(
               controller: nameController,
               decoration: InputDecoration(labelText: 'Nome do Produto'),
+            ),
+            TextField(
+              controller: quantityController,
+              decoration: InputDecoration(labelText: 'Quantidade'),
+              keyboardType: TextInputType.number,
             ),
             TextField(
               controller: totalCostPriceController,
@@ -55,13 +63,17 @@ class EditProductPageState extends State<EditProductPage> {
                 String name = nameController.text;
                 String quantity = quantityController.text;
                 String totalCostPrice = totalCostPriceController.text;
-                // Montar o ingrediente atualizado
-                String updatedIngredient =
-                    '$name - $quantity - $totalCostPrice - $costPricePerUnit';
-                // Atualizar a lista de ingredientes com o ingrediente atualizado
-                widget.products[widget.index] = updatedIngredient;
-                // Voltar para a página anterior com a lista atualizada de ingredientes
-                Navigator.pop(context, widget.products);
+
+                // Atualizar o produto
+                widget.product.set<String>('name', name);
+                widget.product.set<String>('quantity', quantity);
+                widget.product.set<String>('totalCostPrice', totalCostPrice);
+
+                // Salvar o produto no servidor Parse
+                widget.product.save();
+
+                // Voltar para a página anterior
+                Navigator.pop(context);
               },
               child: Text('Salvar'),
             ),

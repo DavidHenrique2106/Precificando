@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -11,9 +12,11 @@ class _ProfilePageState extends State<ProfilePage> {
   File? _image;
   final ImagePicker _picker = ImagePicker();
   final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _companyNameController = TextEditingController();
   String _username = "Usuário";
-  String _email = "user@example.com"; // Placeholder email
-  String _password = "********"; // Placeholder password
+  String _companyName = "Nome da Empresa";
+  String _email = "user@example.com";
+  String _password = "********";
 
   Future<void> _pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
@@ -26,8 +29,13 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
-  void _logout() {
-    Navigator.pushReplacementNamed(context, '/login');
+  void _logout() async {
+    await ParseUser.currentUser().then((user) async {
+      if (user != null) {
+        await user.logout();
+        Navigator.pushReplacementNamed(context, '/login');
+      }
+    });
   }
 
   void _editUsername() {
@@ -59,6 +67,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   _username = _newUsernameController.text;
                 });
                 Navigator.of(context).pop();
+                _updateUserDetails();
               },
               child: Text('Confirmar'),
             ),
@@ -66,6 +75,54 @@ class _ProfilePageState extends State<ProfilePage> {
         );
       },
     );
+  }
+
+  void _editCompanyName() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        final TextEditingController _newCompanyNameController =
+            TextEditingController();
+
+        return AlertDialog(
+          title: Text('Editar Nome da Empresa'),
+          content: TextField(
+            controller: _newCompanyNameController,
+            decoration: InputDecoration(
+              labelText: 'Novo Nome da Empresa',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  _companyName = _newCompanyNameController.text;
+                });
+                Navigator.of(context).pop(_companyName);
+                _updateUserDetails();
+              },
+              child: Text('Confirmar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _updateUserDetails() async {
+    final user = await ParseUser.currentUser() as ParseUser?;
+    if (user != null) {
+      user.set('username', _username);
+      user.set('companyName', _companyName);
+      await user.save();
+    }
   }
 
   void _showCredentials() {
@@ -78,6 +135,7 @@ class _ProfilePageState extends State<ProfilePage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text('Email: $_email'),
+              Divider(),
               Text('Senha: $_password'),
             ],
           ),
@@ -94,16 +152,22 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // Função placeholder para buscar credenciais do BD
   Future<void> _fetchCredentials() async {
-    // Lógica para buscar credenciais do BD será implementada aqui.
-    // Por enquanto, estamos usando placeholders.
+    final user = await ParseUser.currentUser() as ParseUser?;
+    if (user != null) {
+      setState(() {
+        _username = user.username!;
+        _email = user.emailAddress!;
+        _companyName = user.get<String>('companyName') ?? 'Nome da Empresa';
+        _password = user.password ?? '********';
+      });
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    _fetchCredentials(); // Buscar credenciais quando a página é inicializada
+    _fetchCredentials();
   }
 
   @override
@@ -111,56 +175,85 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Perfil'),
+        backgroundColor: Color.fromRGBO(114, 133, 202, 1),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            GestureDetector(
-              onTap: _pickImage,
-              child: CircleAvatar(
-                radius: 50,
-                backgroundImage: _image != null ? FileImage(_image!) : null,
-                child:
-                    _image == null ? Icon(Icons.add_a_photo, size: 50) : null,
+      body: Container(
+        color: Color.fromRGBO(114, 133, 202, 1),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SizedBox(height: 20),
+              Center(
+                child: GestureDetector(
+                  onTap: _pickImage,
+                  child: CircleAvatar(
+                    radius: 50,
+                    backgroundImage: _image != null ? FileImage(_image!) : null,
+                    child: _image == null
+                        ? Icon(Icons.add_a_photo, size: 50)
+                        : null,
+                  ),
+                ),
               ),
-            ),
-            SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    _username,
-                    style: TextStyle(fontSize: 18),
+              SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: _pickImage,
+                child: Text('Escolher Foto'),
+              ),
+              SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      _username,
+                      style: TextStyle(fontSize: 18, color: Colors.white),
+                    ),
                   ),
-                ),
-                IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: _editUsername,
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    'Minhas Credenciais',
-                    style: TextStyle(fontSize: 18),
+                  IconButton(
+                    icon: Icon(Icons.edit, color: Colors.white),
+                    onPressed: _editUsername,
                   ),
-                ),
-                IconButton(
-                  icon: Icon(Icons.visibility),
-                  onPressed: _showCredentials,
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _logout,
-              child: Text('Sair / Alterar Conta'),
-            ),
-          ],
+                ],
+              ),
+              Divider(color: Colors.white),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      _companyName,
+                      style: TextStyle(fontSize: 18, color: Colors.white),
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.edit, color: Colors.white),
+                    onPressed: _editCompanyName,
+                  ),
+                ],
+              ),
+              Divider(color: Colors.white),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Minhas Credenciais',
+                      style: TextStyle(fontSize: 18, color: Colors.white),
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.visibility, color: Colors.white),
+                    onPressed: _showCredentials,
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _logout,
+                child: Text('Sair / Alterar Conta'),
+              ),
+            ],
+          ),
         ),
       ),
     );
