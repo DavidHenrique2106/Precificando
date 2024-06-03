@@ -24,7 +24,8 @@ class RegisterPageState extends State<RegisterPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text("Confirmação"),
-          content: Text("Deseja confirmar o cadastro com as informações fornecidas?"),
+          content: Text(
+              "Deseja confirmar o cadastro com as informações fornecidas?"),
           actions: <Widget>[
             TextButton(
               child: Text("Sim"),
@@ -168,168 +169,168 @@ class RegisterPageState extends State<RegisterPage> {
                       borderRadius: BorderRadius.all(Radius.circular(12)),
                     ),
                     child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Form(
-                          key: formKey,
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-
-                    SizedBox(height: 15),
-                    TextField(
-                      controller: usernameController,
-                      decoration: InputDecoration(
-                        hintText: 'Nome completo',
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Form(
+                        key: formKey,
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              SizedBox(height: 15),
+                              TextField(
+                                controller: usernameController,
+                                decoration: InputDecoration(
+                                  hintText: 'Nome completo',
+                                ),
+                                obscureText: false,
+                                maxLines: 1,
+                                // Allows for more lines
+                              ),
+                              SizedBox(height: 15), // Added padding
+                              TextField(
+                                controller: emailController,
+                                decoration: InputDecoration(
+                                  hintText: 'Email',
+                                ),
+                                obscureText: false,
+                                maxLines: 1, // Allows for more lines
+                              ),
+                              SizedBox(height: 15), // Added padding
+                              TextField(
+                                controller: cpfController,
+                                decoration: InputDecoration(
+                                  hintText: 'CPF',
+                                ),
+                                obscureText: false,
+                                maxLines: 1,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(RegExp(
+                                      r'[0-9.-]')), // Only allows numbers
+                                  LengthLimitingTextInputFormatter(
+                                      14), // Limits input to 11 characters
+                                ],
+                              ),
+                              SizedBox(height: 15),
+                              TextField(
+                                controller: birthDateController,
+                                decoration: InputDecoration(
+                                  hintText: 'Data de nascimento (DD/MM/AAAA)',
+                                ),
+                                obscureText: false,
+                                maxLines: 1,
+                              ),
+                              SizedBox(height: 15), // Added padding
+                              TextField(
+                                controller: cepController,
+                                decoration: InputDecoration(
+                                  hintText: 'CEP',
+                                ),
+                                obscureText: false,
+                                maxLines: 1,
+                                keyboardType: TextInputType.number,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                      RegExp(r'[0-9.-]')),
+                                  LengthLimitingTextInputFormatter(10),
+                                ], // Allows for more lines
+                              ),
+                              SizedBox(height: 15), // Added padding
+                              TextField(
+                                controller: passwordController,
+                                decoration: InputDecoration(hintText: 'Senha'),
+                                obscureText: true,
+                                maxLines: 1, // Allows for more lines
+                              ),
+                              SizedBox(height: 15),
+                              TextField(
+                                controller: passwordConfirmController,
+                                decoration: InputDecoration(
+                                    hintText: 'Confirme a senha'),
+                                obscureText: true,
+                                maxLines: 1,
+                              ),
+                              SizedBox(height: 20),
+                              GestureDetector(
+                                onTap: handleFormSubmission,
+                                child: Container(
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFF5966AB),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.15),
+                                        spreadRadius: 0,
+                                        blurRadius: 30,
+                                        offset: Offset(0, 30),
+                                      ),
+                                    ],
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(12)),
+                                  ),
+                                  padding: EdgeInsets.only(top: 10.0),
+                                  child: Text(
+                                    'Criar conta',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                            ]),
                       ),
-                      obscureText: false,
-                      maxLines: 1,
-                      // Allows for more lines
                     ),
-                    SizedBox(height: 15), // Added padding
-                    TextField(
-                      controller: emailController,
-                      decoration: InputDecoration(
-                        hintText: 'Email',
-                      ),
-                      obscureText: false,
-                      maxLines: 1, // Allows for more lines
-                    ),
-                    SizedBox(height: 15), // Added padding
-                    TextField(
-                      controller: cpfController,
-                      decoration: InputDecoration(
-                        hintText: 'CPF',
-                      ),
-                      obscureText: false,
-                      maxLines: 1,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(
-                            RegExp(r'[0-9.-]')), // Only allows numbers
-                        LengthLimitingTextInputFormatter(
-                            14), // Limits input to 11 characters
-                      ],
-                    ),
-                    SizedBox(height: 15),
-                    TextField(
-                      controller: birthDateController,
-                      decoration: InputDecoration(
-                        hintText: 'Data de nascimento (DD/MM/AAAA)',
-                      ),
-                      obscureText: false,
-                      maxLines: 1,
-                    ),
-                    SizedBox(height: 15), // Added padding
-                    TextField(
-                      controller: cepController,
-                      decoration: InputDecoration(
-                        hintText: 'CEP',
-                      ),
-                      obscureText: false,
-                      maxLines: 1,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(
-                            RegExp(r'[0-9.-]')),
-                        LengthLimitingTextInputFormatter(10),
-                      ], // Allows for more lines
-                    ),
-                    SizedBox(height: 15), // Added padding
-                    TextField(
-                      controller: passwordController,
-                      decoration: InputDecoration(hintText: 'Senha'),
-                      obscureText: true,
-                      maxLines: 1, // Allows for more lines
-                    ),
-                    SizedBox(height: 15),
-                    TextField(
-                      controller: passwordConfirmController,
-                      decoration: InputDecoration(hintText: 'Confirme a senha'),
-                      obscureText: true,
-                      maxLines: 1,
-                    ),
-                    SizedBox(height: 20),
-                    GestureDetector(
-                      onTap: handleFormSubmission,
-                      child: Container(
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Color(0xFF5966AB),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.15),
-                              spreadRadius: 0,
-                              blurRadius: 30,
-                              offset: Offset(0, 30),
-                            ),
-                          ],
-                          borderRadius:
-                          BorderRadius.all(Radius.circular(12)),
-                        ),
-                        child: Text(
-                          'Criar conta',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ),
-
-                  ]
-                    ),
-                        ),
+                  ),
                 ),
-          ),
-        ),
-        // Already have an account? Go to Login
-        Positioned(
-          left: 32,
-          top: 700,
-          child: GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: Text(
-              'Já tem conta? Faça o Login',
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w300,
-                fontSize: 16,
-                color: Color(0xFF646464),
-              ),
+                // Already have an account? Go to Login
+                Positioned(
+                  left: 32,
+                  top: 700,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      'Já tem conta? Faça o Login',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w300,
+                        fontSize: 16,
+                        color: Color(0xFF646464),
+                      ),
+                    ),
+                  ),
+                ),
+                // Preci Text
+                Positioned(
+                  left: 32,
+                  top: 775,
+                  child: Text(
+                    'Preci',
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 28,
+                      color: Color(0xFFE29942),
+                    ),
+                  ),
+                ),
+                // Ficando Text
+                Positioned(
+                  left: 32,
+                  top: 800,
+                  child: Text(
+                    'Ficando',
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 22,
+                      color: Color(0xFF3F53BE),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
-        // Preci Text
-        Positioned(
-          left: 32,
-          top: 775,
-          child: Text(
-            'Preci',
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.w700,
-              fontSize: 28,
-              color: Color(0xFFE29942),
-            ),
-          ),
-        ),
-        // Ficando Text
-        Positioned(
-          left: 32,
-          top: 800,
-          child: Text(
-            'Ficando',
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.w700,
-              fontSize: 22,
-              color: Color(0xFF3F53BE),
-            ),
-          ),
-        ),
-        ],
       ),
-    ),
-    ),
-    ),
     );
   }
 
@@ -413,7 +414,6 @@ class RegisterPageState extends State<RegisterPage> {
     final cep = cepController.text.trim();
     final cpf = cpfController.text.trim();
     final birthDate = birthDateController.text.trim();
-
 
     final user = ParseUser.createUser(username, password, email);
 
