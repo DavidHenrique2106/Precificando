@@ -33,8 +33,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _buildIconWithLabel(IconData icon, bool isSelected) {
     return Container(
-      width: 50,
-      height: 50,
+      width: 30,
+      height: 30,
       alignment: Alignment.bottomCenter,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
@@ -46,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           Icon(
             icon,
-            size: 35,
+            size: 25,
             color: isSelected ? Colors.white : Colors.black,
           ),
           SizedBox(height: 4),
@@ -72,15 +72,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Container(
-                    width: 100,
-                    height: 150,
+                    width: 90,
+                    height: 90,
                     child: Icon(
                       Icons.person,
                       color: Colors.white,
                       size: 40,
                     ),
                   ),
-                  SizedBox(width: 10),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -208,10 +207,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                       child: Column(
                         children: [
-                          Icon(
-                            Icons.restaurant_menu,
-                            color: Colors.white,
-                            size: 50,
+                          Container(
+                            height: 50,
+                            child: Image.asset(
+                                'lib/assets/icons8-ingredientes-50.png',
+                                color: Colors.white),
                           ),
                           Text(
                             'Ingredientes',
@@ -314,24 +314,26 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   child: Row(
                     children: [
-                      Icon(
-                        Icons.badge,
-                        color: Colors.white,
-                        size: 50,
-                      ),
-                      SizedBox(
-                          width: 10), // Espaçamento entre o ícone e o texto
                       Expanded(
                         child: Text(
                           'Conheça nos planos de consultoria de negócios.',
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 17,
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
                           textAlign: TextAlign.start,
                           overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
+                          maxLines: 4,
+                        ),
+                      ),
+                      // Espaçamento entre o ícone e o texto
+
+                      Container(
+                        color: Color.fromRGBO(114, 133, 202, 1),
+                        height: 60,
+                        child: Image.asset(
+                          'lib/assets/preci.png',
                         ),
                       ),
                     ],
@@ -382,23 +384,23 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   child: Row(
                     children: [
+                      Icon(
+                        Icons.map,
+                        color: Colors.white,
+                        size: 60,
+                      ),
                       Expanded(
                         child: Text(
                           'Aprenda a navegar pelo app e veja nossas dicas na redes',
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 17,
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
                           textAlign: TextAlign.start,
                           overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
+                          maxLines: 4,
                         ),
-                      ),
-                      Icon(
-                        Icons.map,
-                        color: Colors.white,
-                        size: 60,
                       ),
                     ],
                   ),
