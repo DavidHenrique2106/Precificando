@@ -47,8 +47,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _onItemTapped(int index) {
     setState(() {
-      if (index == 1) {
-        // Lógica para index 1, se necessário
+      if (index == 0) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MyHomePage()),
+        );
+        
       } else if (index == 2) {
         Navigator.push(
           context,
