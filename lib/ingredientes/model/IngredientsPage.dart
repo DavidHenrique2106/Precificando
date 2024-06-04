@@ -219,20 +219,39 @@ class _IngredientListPageState extends State<IngredientListPage> {
             backgroundColor: Color.fromRGBO(226, 153, 66, 1),
             items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
-                icon: _buildIconWithLabel(Icons.home, _selectedIndex == 1),
+                icon: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => MyHomePage()),
+                    );
+                  },
+                  child: _buildIconWithLabel(Icons.home, _selectedIndex == 0),
+                ),
                 label: 'Home',
                 backgroundColor: Colors.white,
               ),
               BottomNavigationBarItem(
-                icon: _buildIconWithLabel(
-                  Icons.currency_exchange_outlined,
-                  _selectedIndex == 0,
+                icon: GestureDetector(
+                  onTap: () {},
+                  child: _buildIconWithLabel(
+                    Icons.currency_exchange_outlined,
+                    _selectedIndex == 1,
+                  ),
                 ),
                 label: 'Finanças',
                 backgroundColor: Colors.white,
               ),
               BottomNavigationBarItem(
-                icon: _buildIconWithLabel(Icons.person, _selectedIndex == 2),
+                icon: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ProfilePage()),
+                    );
+                  },
+                  child: _buildIconWithLabel(Icons.person, _selectedIndex == 2),
+                ),
                 label: 'Perfil',
                 backgroundColor: Colors.white,
               ),
@@ -240,7 +259,6 @@ class _IngredientListPageState extends State<IngredientListPage> {
             selectedItemColor: Colors.white,
             unselectedItemColor: Colors.white70,
             currentIndex: _selectedIndex,
-            onTap: _onItemTapped,
           ),
         ),
       ),

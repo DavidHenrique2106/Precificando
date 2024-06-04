@@ -52,26 +52,6 @@ class ProductListPageState extends State<ProductListPage> {
     );
   }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      if (index == 1) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => MyHomePage()),
-        );
-
-        // Lógica para index 1, se necessário
-      } else if (index == 2) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => ProfilePage()),
-        );
-      } else {
-        _selectedIndex = index;
-      }
-    });
-  }
-
   Future<void> _loadProducts() async {
     QueryBuilder<ParseObject> queryProducts =
         QueryBuilder<ParseObject>(ParseObject('Products'));
@@ -214,20 +194,39 @@ class ProductListPageState extends State<ProductListPage> {
             backgroundColor: Color.fromRGBO(114, 133, 202, 1),
             items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
-                icon: _buildIconWithLabel(Icons.home, _selectedIndex == 1),
+                icon: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => MyHomePage()),
+                    );
+                  },
+                  child: _buildIconWithLabel(Icons.home, _selectedIndex == 0),
+                ),
                 label: 'Home',
                 backgroundColor: Colors.white,
               ),
               BottomNavigationBarItem(
-                icon: _buildIconWithLabel(
-                  Icons.currency_exchange_outlined,
-                  _selectedIndex == 0,
+                icon: GestureDetector(
+                  onTap: () {},
+                  child: _buildIconWithLabel(
+                    Icons.currency_exchange_outlined,
+                    _selectedIndex == 1,
+                  ),
                 ),
                 label: 'Finanças',
                 backgroundColor: Colors.white,
               ),
               BottomNavigationBarItem(
-                icon: _buildIconWithLabel(Icons.person, _selectedIndex == 2),
+                icon: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ProfilePage()),
+                    );
+                  },
+                  child: _buildIconWithLabel(Icons.person, _selectedIndex == 2),
+                ),
                 label: 'Perfil',
                 backgroundColor: Colors.white,
               ),
@@ -235,7 +234,6 @@ class ProductListPageState extends State<ProductListPage> {
             selectedItemColor: Colors.white,
             unselectedItemColor: Colors.white70,
             currentIndex: _selectedIndex,
-            onTap: _onItemTapped,
           ),
         ),
       ),
