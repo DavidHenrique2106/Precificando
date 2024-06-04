@@ -214,14 +214,14 @@ class ProductListPageState extends State<ProductListPage> {
             backgroundColor: Color.fromRGBO(114, 133, 202, 1),
             items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
-                icon: _buildIconWithLabel(Icons.home, _selectedIndex == 0),
+                icon: _buildIconWithLabel(Icons.home, _selectedIndex == 1),
                 label: 'Home',
                 backgroundColor: Colors.white,
               ),
               BottomNavigationBarItem(
                 icon: _buildIconWithLabel(
                   Icons.currency_exchange_outlined,
-                  _selectedIndex == 1,
+                  _selectedIndex == 0,
                 ),
                 label: 'Finanças',
                 backgroundColor: Colors.white,
