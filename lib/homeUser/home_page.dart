@@ -73,11 +73,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: [
                   Container(
                     width: 90,
-                    height: 90,
+                    height: 120,
                     child: Icon(
                       Icons.person,
                       color: Colors.white,
-                      size: 40,
+                      size: 60,
                     ),
                   ),
                   Column(
@@ -103,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ],
               ),
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 40),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0),
               child: Stack(
@@ -413,7 +413,7 @@ class _MyHomePageState extends State<MyHomePage> {
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
           textTheme: Theme.of(context).textTheme.copyWith(
-                bodySmall: TextStyle(color: Colors.white),
+                caption: TextStyle(color: Colors.white),
               ),
         ),
         child: ClipRRect(
