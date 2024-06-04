@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'AddProdutoPage.dart';
 import 'EditProdutoPage.dart';
-
+import 'package:flora/homeUser/home_page.dart';
+import 'package:flora/perfil/profile_page.dart';
 
 class ProductListPage extends StatefulWidget {
   @override
@@ -10,8 +11,11 @@ class ProductListPage extends StatefulWidget {
 }
 
 class ProductListPageState extends State<ProductListPage> {
+  int _selectedIndex = 0;
   int currentTab = 0;
   List<ParseObject> products = [];
+  List<ParseObject> filteredProducts = [];
+  String searchQuery = "";
 
   @override
   void initState() {
@@ -19,85 +23,156 @@ class ProductListPageState extends State<ProductListPage> {
     _loadProducts();
   }
 
+  static List<Widget> _widgetOptions = <Widget>[
+    MyHomePage(), // Página inicial (Home)
+    ProfilePage(), // Página do perfil
+  ];
+
+  Widget _buildIconWithLabel(IconData icon, bool isSelected) {
+    return Container(
+      width: 50,
+      height: 50,
+      alignment: Alignment.bottomCenter,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color:
+            isSelected ? Color.fromRGBO(114, 133, 202, 1) : Colors.transparent,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            size: 35,
+            color: isSelected ? Colors.white : Colors.black,
+          ),
+          SizedBox(height: 4),
+        ],
+      ),
+    );
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      if (index == 1) {
+        // Lógica para index 1, se necessário
+      } else if (index == 2) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ProfilePage()),
+        );
+      } else {
+        _selectedIndex = index;
+      }
+    });
+  }
+
   Future<void> _loadProducts() async {
-    QueryBuilder<ParseObject> queryProducts = QueryBuilder<ParseObject>(ParseObject('Products'));
+    QueryBuilder<ParseObject> queryProducts =
+        QueryBuilder<ParseObject>(ParseObject('Products'));
     final ParseResponse apiResponse = await queryProducts.query();
 
     if (apiResponse.success && apiResponse.results != null) {
       setState(() {
         products = apiResponse.results as List<ParseObject>;
+        filteredProducts = products;
       });
     }
   }
 
+  void _filterProducts() {
+    setState(() {
+      filteredProducts = products.where((product) {
+        final name = product.get<String>('name')?.toLowerCase() ?? '';
+        return name.contains(searchQuery.toLowerCase());
+      }).toList();
+    });
+  }
+
   Future<void> _deleteProduct(int index) async {
-    final product = products[index];
+    final product = filteredProducts[index];
     await product.delete();
-    await _loadProducts(); // Recarregar os produtos após deletar
+    await _loadProducts();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(60, 90, 182, 0.3),
+        backgroundColor: Color.fromRGBO(114, 133, 202, 1),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [const Text("Lista de Produtos")],
         ),
       ),
-      body: ListView.builder(
-        itemCount: products.length,
-        itemBuilder: (context, index) {
-          final product = products[index];
-          return ListTile(
-            title: Text(product.get<String>('name') ?? 'No Name'),
-            onTap: () {
-              _showIngredients(product); // Chame a função para exibir os ingredientes
-            },
-            trailing: PopupMenuButton(
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                  child: Text('Editar'),
-                  value: 'edit',
-                ),
-                PopupMenuItem(
-                  child: Text('Excluir'),
-                  value: 'delete',
-                ),
-              ],
-              onSelected: (value) {
-                if (value == 'edit') {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => EditProductPage(product, products.cast<ParseObject>()),
-                    ),
-                  ).then((value) {
-                    if (value != null && value == true) {
-                      _loadProducts();
-                    }
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                onChanged: (value) {
+                  setState(() {
+                    searchQuery = value;
+                    _filterProducts();
                   });
-                } else if (value == 'delete') {
-                  _deleteProduct(index);
-                }
+                },
+                decoration: InputDecoration(
+                  hintText: 'Pesquisar...',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  contentPadding: EdgeInsets.symmetric(horizontal: 20),
+                ),
+              ),
+            ),
+            ListView.builder(
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: filteredProducts.length,
+              itemBuilder: (context, index) {
+                final product = filteredProducts[index];
+                return ListTile(
+                  title: Text(product.get<String>('name') ?? 'No Name'),
+                  onTap: () {
+                    _showIngredients(product);
+                  },
+                  trailing: PopupMenuButton(
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        child: Text('Editar'),
+                        value: 'edit',
+                      ),
+                      PopupMenuItem(
+                        child: Text('Excluir'),
+                        value: 'delete',
+                      ),
+                    ],
+                    onSelected: (value) {
+                      if (value == 'edit') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditProductPage(
+                                product, products.cast<ParseObject>()),
+                          ),
+                        ).then((value) {
+                          if (value != null && value == true) {
+                            _loadProducts();
+                          }
+                        });
+                      } else if (value == 'delete') {
+                        _deleteProduct(index);
+                      }
+                    },
+                  ),
+                );
               },
             ),
-          );
-        },
-      ),
-      floatingActionButton: Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).size.height * 0.03,
-          left: MediaQuery.of(context).size.width * 0.05,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            SizedBox(height: MediaQuery.of(context).size.height * 0.022),
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.16,
-              height: MediaQuery.of(context).size.width * 0.16,
+            SizedBox(height: 20), // Espaço entre a lista e o botão
+            Center(
               child: FloatingActionButton(
                 onPressed: () async {
                   final result = await Navigator.push(
@@ -110,64 +185,54 @@ class ProductListPageState extends State<ProductListPage> {
                 },
                 child: Icon(
                   Icons.add,
-                  size: MediaQuery.of(context).size.width * 0.08,
                   color: Color.fromRGBO(217, 217, 217, 1),
                 ),
                 backgroundColor: Color.fromRGBO(77, 91, 174, 1),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                      MediaQuery.of(context).size.width * 0.08),
-                ),
               ),
             ),
+            SizedBox(height: 20), // Espaço para rolar a página até o fim
           ],
         ),
       ),
-      floatingActionButtonLocation:
-      FloatingActionButtonLocation.miniCenterDocked,
-      bottomNavigationBar: Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 0.07,
-          child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(20.0),
-      topRight: Radius.circular(20.0),
-    ),
-    child: Container(
-    height: MediaQuery.of(context).size.height * 0.078,
-    color: Color.fromRGBO(217, 217, 217, 1),
-    child: Row(
-    mainAxisAlignment: MainAxisAlignment.spaceAround,
-    children: <Widget>[
-    IconButton(
-    icon: Icon(
-    Icons.home,
-    size: MediaQuery.of(context).size.width * 0.14,
-    color: Color.fromRGBO(77, 91, 174, 1),
-    ),
-    onPressed: () {
-    setState(() {
-    currentTab = 0;
-    });
-    },
-    ),
-      SizedBox(width: MediaQuery.of(context).size.width * 0.14),
-      IconButton(
-        icon: Icon(
-          Icons.person,
-          size: MediaQuery.of(context).size.width * 0.14,
-          color: Color.fromRGBO(77, 91, 174, 1),
+      bottomNavigationBar: Theme(
+        data: Theme.of(context).copyWith(
+          textTheme: Theme.of(context).textTheme.copyWith(
+                caption: TextStyle(color: Colors.white),
+              ),
         ),
-        onPressed: () {
-          setState(() {
-            currentTab = 0;
-          });
-        },
-      ),
-    ],
-    ),
-    ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16.0),
+            topRight: Radius.circular(16.0),
           ),
+          child: BottomNavigationBar(
+            backgroundColor: Color.fromRGBO(114, 133, 202, 1),
+            items: <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: _buildIconWithLabel(Icons.home, _selectedIndex == 0),
+                label: 'Home',
+                backgroundColor: Colors.white,
+              ),
+              BottomNavigationBarItem(
+                icon: _buildIconWithLabel(
+                  Icons.currency_exchange_outlined,
+                  _selectedIndex == 3,
+                ),
+                label: 'Finanças',
+                backgroundColor: Colors.white,
+              ),
+              BottomNavigationBarItem(
+                icon: _buildIconWithLabel(Icons.person, _selectedIndex == 2),
+                label: 'Perfil',
+                backgroundColor: Colors.white,
+              ),
+            ],
+            selectedItemColor: Colors.white,
+            unselectedItemColor: Colors.white70,
+            currentIndex: _selectedIndex,
+            onTap: _onItemTapped,
+          ),
+        ),
       ),
     );
   }
@@ -183,5 +248,3 @@ class ProductListPageState extends State<ProductListPage> {
 
   IngredientsPage({required ParseObject product}) async {}
 }
-
-
