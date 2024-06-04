@@ -174,13 +174,19 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Perfil'),
         backgroundColor: Color.fromRGBO(114, 133, 202, 1),
+        titleTextStyle: TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+        ),
+        title: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          const Text('Perfil'),
+        ]),
       ),
       body: Container(
         color: Color.fromRGBO(114, 133, 202, 1),
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(36.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -197,12 +203,18 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
               ),
-              SizedBox(height: 10),
+              SizedBox(
+                height: 25,
+              ),
               ElevatedButton(
                 onPressed: _pickImage,
+                style: ElevatedButton.styleFrom(
+                    primary: Color.fromRGBO(226, 153, 66, 1),
+                    onPrimary: Colors.white,
+                    padding: EdgeInsets.symmetric(vertical: 20)),
                 child: Text('Escolher Foto'),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 100),
               Row(
                 children: [
                   Expanded(
@@ -247,10 +259,15 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ],
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 40),
               ElevatedButton(
                 onPressed: _logout,
                 child: Text('Sair / Alterar Conta'),
+                style: ElevatedButton.styleFrom(
+                  primary: Color.fromRGBO(226, 153, 66, 1),
+                  onPrimary: Colors.white,
+                  padding: EdgeInsets.symmetric(vertical: 20),
+                ),
               ),
             ],
           ),
