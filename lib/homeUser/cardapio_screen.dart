@@ -5,7 +5,6 @@ import 'EditProdutoPage.dart';
 import 'package:flora/homeUser/home_page.dart';
 import 'package:flora/perfil/profile_page.dart';
 
-
 class ProductListPage extends StatefulWidget {
   @override
   ProductListPageState createState() => ProductListPageState();
@@ -31,8 +30,8 @@ class ProductListPageState extends State<ProductListPage> {
 
   Widget _buildIconWithLabel(IconData icon, bool isSelected) {
     return Container(
-      width: 50,
-      height: 50,
+      width: 30,
+      height: 30,
       alignment: Alignment.bottomCenter,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
@@ -44,8 +43,8 @@ class ProductListPageState extends State<ProductListPage> {
         children: [
           Icon(
             icon,
-            size: 35,
-            color: isSelected ? Colors.white : Colors.black,
+            size: 25,
+            color: isSelected ? Colors.black : Colors.black,
           ),
           SizedBox(height: 4),
         ],
@@ -100,7 +99,7 @@ class ProductListPageState extends State<ProductListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-       backgroundColor: Color.fromRGBO(114, 133, 202, 1),
+        backgroundColor: Color.fromRGBO(114, 133, 202, 1),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [const Text("Lista de Produtos")],
@@ -195,8 +194,7 @@ class ProductListPageState extends State<ProductListPage> {
           ],
         ),
       ),
-
-     bottomNavigationBar: Theme(
+      bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
           textTheme: Theme.of(context).textTheme.copyWith(
                 caption: TextStyle(color: Colors.white),
@@ -218,7 +216,7 @@ class ProductListPageState extends State<ProductListPage> {
               BottomNavigationBarItem(
                 icon: _buildIconWithLabel(
                   Icons.currency_exchange_outlined,
-                  _selectedIndex == 3,
+                  _selectedIndex == 1,
                 ),
                 label: 'Finanças',
                 backgroundColor: Colors.white,
