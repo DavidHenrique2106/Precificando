@@ -23,8 +23,8 @@ class _IngredientListPageState extends State<IngredientListPage> {
 
   Widget _buildIconWithLabel(IconData icon, bool isSelected) {
     return Container(
-      width: 50,
-      height: 50,
+      width: 30,
+      height: 30,
       alignment: Alignment.bottomCenter,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
@@ -36,8 +36,8 @@ class _IngredientListPageState extends State<IngredientListPage> {
         children: [
           Icon(
             icon,
-            size: 35,
-            color: isSelected ? Colors.white : Colors.black,
+            size: 25,
+            color: isSelected ? Colors.black : Colors.black,
           ),
           SizedBox(height: 4),
         ],
@@ -221,7 +221,7 @@ class _IngredientListPageState extends State<IngredientListPage> {
               BottomNavigationBarItem(
                 icon: _buildIconWithLabel(
                   Icons.currency_exchange_outlined,
-                  _selectedIndex == 3,
+                  _selectedIndex == 1,
                 ),
                 label: 'Finanças',
                 backgroundColor: Colors.white,
