@@ -3,6 +3,8 @@ import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 import 'AddProdutoPage.dart';
 import 'EditProdutoPage.dart';
 import 'package:flora/homeUser/home_page.dart';
+import 'package:flora/perfil/profile_page.dart';
+
 
 class ProductListPage extends StatefulWidget {
   @override
@@ -10,6 +12,7 @@ class ProductListPage extends StatefulWidget {
 }
 
 class ProductListPageState extends State<ProductListPage> {
+  int _selectedIndex = 0;
   int currentTab = 0;
   List<ParseObject> products = [];
   List<ParseObject> filteredProducts = [];
@@ -19,6 +22,50 @@ class ProductListPageState extends State<ProductListPage> {
   void initState() {
     super.initState();
     _loadProducts();
+  }
+
+  static List<Widget> _widgetOptions = <Widget>[
+    MyHomePage(), // Página inicial (Home)
+    ProfilePage(), // Página do perfil
+  ];
+
+  Widget _buildIconWithLabel(IconData icon, bool isSelected) {
+    return Container(
+      width: 50,
+      height: 50,
+      alignment: Alignment.bottomCenter,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color:
+            isSelected ? Color.fromRGBO(114, 133, 202, 1) : Colors.transparent,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            size: 35,
+            color: isSelected ? Colors.white : Colors.black,
+          ),
+          SizedBox(height: 4),
+        ],
+      ),
+    );
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      if (index == 1) {
+        // Lógica para index 1, se necessário
+      } else if (index == 2) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ProfilePage()),
+        );
+      } else {
+        _selectedIndex = index;
+      }
+    });
   }
 
   Future<void> _loadProducts() async {
@@ -53,7 +100,7 @@ class ProductListPageState extends State<ProductListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0x4d7a2cf8),
+       backgroundColor: Color.fromRGBO(114, 133, 202, 1),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [const Text("Lista de Produtos")],
@@ -148,48 +195,44 @@ class ProductListPageState extends State<ProductListPage> {
           ],
         ),
       ),
-      bottomNavigationBar: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height * 0.07,
+
+     bottomNavigationBar: Theme(
+        data: Theme.of(context).copyWith(
+          textTheme: Theme.of(context).textTheme.copyWith(
+                caption: TextStyle(color: Colors.white),
+              ),
+        ),
         child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20.0),
-            topRight: Radius.circular(20.0),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16.0),
+            topRight: Radius.circular(16.0),
           ),
-          child: Container(
-            height: MediaQuery.of(context).size.height * 0.078,
-            color: Color.fromRGBO(217, 217, 217, 1),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                IconButton(
-                  icon: Icon(
-                    Icons.home,
-                    size: MediaQuery.of(context).size.width * 0.14,
-                    color: Color.fromRGBO(77, 91, 174, 1),
-                  ),
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => MyHomePage()),
-                    );
-                  },
+          child: BottomNavigationBar(
+            backgroundColor: Color.fromRGBO(114, 133, 202, 1),
+            items: <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: _buildIconWithLabel(Icons.home, _selectedIndex == 0),
+                label: 'Home',
+                backgroundColor: Colors.white,
+              ),
+              BottomNavigationBarItem(
+                icon: _buildIconWithLabel(
+                  Icons.currency_exchange_outlined,
+                  _selectedIndex == 3,
                 ),
-                SizedBox(width: MediaQuery.of(context).size.width * 0.14),
-                IconButton(
-                  icon: Icon(
-                    Icons.person,
-                    size: MediaQuery.of(context).size.width * 0.14,
-                    color: Color.fromRGBO(77, 91, 174, 1),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      currentTab = 0;
-                    });
-                  },
-                ),
-              ],
-            ),
+                label: 'Finanças',
+                backgroundColor: Colors.white,
+              ),
+              BottomNavigationBarItem(
+                icon: _buildIconWithLabel(Icons.person, _selectedIndex == 2),
+                label: 'Perfil',
+                backgroundColor: Colors.white,
+              ),
+            ],
+            selectedItemColor: Colors.white,
+            unselectedItemColor: Colors.white70,
+            currentIndex: _selectedIndex,
+            onTap: _onItemTapped,
           ),
         ),
       ),

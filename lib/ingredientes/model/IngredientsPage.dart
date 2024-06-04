@@ -3,6 +3,7 @@ import 'AddIngredientPage.dart';
 import 'EditIngredientPage.dart';
 import 'package:flora/homeUser/home_page.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
+import 'package:flora/perfil/profile_page.dart';
 
 class IngredientListPage extends StatefulWidget {
   @override
@@ -10,7 +11,54 @@ class IngredientListPage extends StatefulWidget {
 }
 
 class _IngredientListPageState extends State<IngredientListPage> {
+  int _selectedIndex = 0;
   List<ParseObject> ingredients = [];
+  List<ParseObject> filteredIngredients = [];
+  String searchQuery = "";
+
+  static List<Widget> _widgetOptions = <Widget>[
+    MyHomePage(), // Página inicial (Home)
+    ProfilePage(), // Página do perfil
+  ];
+
+  Widget _buildIconWithLabel(IconData icon, bool isSelected) {
+    return Container(
+      width: 50,
+      height: 50,
+      alignment: Alignment.bottomCenter,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color:
+            isSelected ? Color.fromRGBO(226, 153, 66, 1) : Colors.transparent,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            size: 35,
+            color: isSelected ? Colors.white : Colors.black,
+          ),
+          SizedBox(height: 4),
+        ],
+      ),
+    );
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      if (index == 1) {
+        // Lógica para index 1, se necessário
+      } else if (index == 2) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ProfilePage()),
+        );
+      } else {
+        _selectedIndex = index;
+      }
+    });
+  }
 
   @override
   void initState() {
@@ -19,151 +67,175 @@ class _IngredientListPageState extends State<IngredientListPage> {
   }
 
   Future<void> _loadIngredients() async {
-    QueryBuilder<ParseObject> queryIngredients = QueryBuilder<ParseObject>(ParseObject('Ingredients'));
+    QueryBuilder<ParseObject> queryIngredients =
+        QueryBuilder<ParseObject>(ParseObject('Ingredients'));
     final ParseResponse apiResponse = await queryIngredients.query();
 
     if (apiResponse.success && apiResponse.results != null) {
       setState(() {
         ingredients = apiResponse.results as List<ParseObject>;
+        // Inicializar a lista filtrada com todos os ingredientes
+        filteredIngredients = List.from(ingredients);
       });
     }
   }
 
-  Future<void> _deleteIngredient(int index) async {
+  // Método para filtrar os ingredientes com base na consulta de pesquisa
+  void _filterIngredients(String query) {
+    setState(() {
+      searchQuery = query;
+      filteredIngredients = ingredients.where((ingredient) {
+        final name = ingredient.get<String>('name')?.toLowerCase() ?? '';
+        return name.contains(searchQuery.toLowerCase());
+      }).toList();
+    });
+  }
+
+  void _deleteIngredient(int index) async {
     final ingredient = ingredients[index];
     await ingredient.delete();
-    await _loadIngredients(); // Recarregar os ingredientes após deletar
+    await _loadIngredients();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(60, 90, 182, 0.3),
+        backgroundColor: Color.fromRGBO(226, 153, 66, 1),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [const Text("Lista de Ingredientes")],
+          children: [
+            const Text(
+              "Lista de Ingredientes",
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            )
+          ],
         ),
       ),
-      body: ListView.builder(
-        itemCount: ingredients.length,
-        itemBuilder: (context, index) {
-          final ingredient = ingredients[index];
-          return ListTile(
-            title: Text(ingredient.get<String>('name') ?? 'No Name'),
-            trailing: PopupMenuButton(
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                  child: Text('Editar'),
-                  value: 'edit',
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(
+              height: 20,
+            ),
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: TextField(
+                onChanged: _filterIngredients,
+                decoration: InputDecoration(
+                  labelText: 'Pesquisar',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
                 ),
-                PopupMenuItem(
-                  child: Text('Excluir'),
-                  value: 'delete',
-                ),
-              ],
-              onSelected: (value) {
-                if (value == 'edit') {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => EditIngredientPage(index, ingredients.cast()),
-                    ),
-                  ).then((value) {
-                    if (value != null) {
-                      _loadIngredients();
-                    }
-                  });
-                } else if (value == 'delete') {
-                  _deleteIngredient(index);
-                }
+              ),
+            ),
+            // Lista de Ingredientes
+            ListView.builder(
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: filteredIngredients.length,
+              itemBuilder: (context, index) {
+                final ingredient = filteredIngredients[index];
+                return ListTile(
+                  title: Text(ingredient.get<String>('name') ?? 'No Name'),
+                  trailing: PopupMenuButton(
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        child: Text('Editar'),
+                        value: 'edit',
+                      ),
+                      PopupMenuItem(
+                        child: Text('Excluir'),
+                        value: 'delete',
+                      ),
+                    ],
+                    onSelected: (value) {
+                      if (value == 'edit') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                EditIngredientPage(index, ingredients.cast()),
+                          ),
+                        ).then((value) {
+                          if (value != null) {
+                            _loadIngredients();
+                          }
+                        });
+                      } else if (value == 'delete') {
+                        _deleteIngredient(index);
+                      }
+                    },
+                  ),
+                );
               },
             ),
-          );
-        },
-      ),
-      floatingActionButton: Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).size.height * 0.03,
-          left: MediaQuery.of(context).size.width * 0.05,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            SizedBox(height: MediaQuery.of(context).size.height * 0.022),
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.16,
-              height: MediaQuery.of(context).size.width * 0.16,
+            SizedBox(height: 20), // Espaço entre a lista e o botão
+            Center(
               child: FloatingActionButton(
                 onPressed: () async {
                   final result = await Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => AddIngredientPage()),
+                    MaterialPageRoute(
+                        builder: (context) => AddIngredientPage()),
                   );
-
-                  if (result != null && result == true) {
+                  if (result != null) {
                     await _loadIngredients();
                   }
                 },
                 child: Icon(
                   Icons.add,
-                  size: MediaQuery.of(context).size.width * 0.08,
                   color: Color.fromRGBO(217, 217, 217, 1),
                 ),
-                backgroundColor: Color.fromRGBO(77, 91, 174, 1),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 0.08),
-                ),
+                backgroundColor: Color.fromRGBO(226, 153, 66, 1),
               ),
             ),
+            SizedBox(height: 20),
           ],
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterDocked,
-      bottomNavigationBar: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height * 0.07,
+      bottomNavigationBar: Theme(
+        data: Theme.of(context).copyWith(
+          textTheme: Theme.of(context).textTheme.copyWith(
+                caption: TextStyle(color: Colors.white),
+              ),
+        ),
         child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20.0),
-            topRight: Radius.circular(20.0),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16.0),
+            topRight: Radius.circular(16.0),
           ),
-          child: Container(
-            height: MediaQuery.of(context).size.height * 0.078,
-            color: Color.fromRGBO(217, 217, 217, 1),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                IconButton(
-                  icon: Icon(
-                    Icons.home,
-                    size: MediaQuery.of(context).size.width * 0.14,
-                    color: Color.fromRGBO(77, 91, 174, 1),
-                  ),
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => MyHomePage()),
-                    );
-                  },
+          child: BottomNavigationBar(
+            backgroundColor: Color.fromRGBO(226, 153, 66, 1),
+            items: <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: _buildIconWithLabel(Icons.home, _selectedIndex == 0),
+                label: 'Home',
+                backgroundColor: Colors.white,
+              ),
+              BottomNavigationBarItem(
+                icon: _buildIconWithLabel(
+                  Icons.currency_exchange_outlined,
+                  _selectedIndex == 3,
                 ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.14,
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.person,
-                    size: MediaQuery.of(context).size.width * 0.14,
-                    color: Color.fromRGBO(77, 91, 174, 1),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      // Adicione aqui a ação desejada ao pressionar o ícone de perfil
-                    });
-                  },
-                ),
-              ],
-            ),
+                label: 'Finanças',
+                backgroundColor: Colors.white,
+              ),
+              BottomNavigationBarItem(
+                icon: _buildIconWithLabel(Icons.person, _selectedIndex == 2),
+                label: 'Perfil',
+                backgroundColor: Colors.white,
+              ),
+            ],
+            selectedItemColor: Colors.white,
+            unselectedItemColor: Colors.white70,
+            currentIndex: _selectedIndex,
+            onTap: _onItemTapped,
           ),
         ),
       ),
