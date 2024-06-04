@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
+import 'package:flora/homeUser/home_page.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -9,6 +11,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  int _selectedIndex = 0;
   File? _image;
   final ImagePicker _picker = ImagePicker();
   final TextEditingController _usernameController = TextEditingController();
@@ -17,6 +20,45 @@ class _ProfilePageState extends State<ProfilePage> {
   String _companyName = "Nome da Empresa";
   String _email = "user@example.com";
   String _password = "********";
+
+  Widget _buildIconWithLabel(IconData icon, bool isSelected) {
+    return Container(
+      width: 30,
+      height: 30,
+      alignment: Alignment.bottomCenter,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color:
+            isSelected ? Color.fromRGBO(226, 153, 66, 1) : Colors.transparent,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            size: 25,
+            color: isSelected ? Colors.white : Colors.black,
+          ),
+          SizedBox(height: 4),
+        ],
+      ),
+    );
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      if (index == 1) {
+        // Lógica para index 1, se necessário
+      } else if (index == 2) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ProfilePage()),
+        );
+      } else {
+        _selectedIndex = index;
+      }
+    });
+  }
 
   Future<void> _pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
@@ -174,103 +216,138 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(114, 133, 202, 1),
-        titleTextStyle: TextStyle(
-          color: Colors.white,
-          fontSize: 24,
-        ),
-        title: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          const Text('Perfil'),
-        ]),
-      ),
-      body: Container(
-        color: Color.fromRGBO(114, 133, 202, 1),
-        child: Padding(
-          padding: const EdgeInsets.all(36.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+          automaticallyImplyLeading: false,
+          backgroundColor: Color.fromRGBO(114, 133, 202, 1),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: 20),
-              Center(
-                child: GestureDetector(
-                  onTap: _pickImage,
-                  child: CircleAvatar(
-                    radius: 60,
-                    backgroundImage: _image != null ? FileImage(_image!) : null,
-                    child: _image == null
-                        ? Icon(Icons.add_a_photo, size: 60)
-                        : null,
-                  ),
-                ),
-              ),
-              SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: _pickImage,
-                style: ElevatedButton.styleFrom(
-                  primary: Color.fromRGBO(226, 153, 66, 1),
-                  onPrimary: Colors.white,
-                  padding: EdgeInsets.symmetric(vertical: 25),
-                ),
-                child: Text('Escolher Foto', style: TextStyle(fontSize: 18)),
-              ),
-              SizedBox(height: 40),
-              _buildEditableField(
-                label: 'Nome de Usuário',
-                value: _username,
-                onEdit: _editUsername,
-              ),
-              Divider(color: Colors.white),
-              _buildEditableField(
-                label: 'Nome da Empresa',
-                value: _companyName,
-                onEdit: _editCompanyName,
-              ),
-              Divider(color: Colors.white),
-              _buildEditableField(
-                label: 'Minhas Credenciais',
-                value: '',
-                onEdit: _showCredentials,
-                showIcon: true,
-              ),
-              SizedBox(height: 50),
-              ElevatedButton(
-                onPressed: _logout,
-                child: Text('Sair / Alterar Conta',
-                    style: TextStyle(fontSize: 18)),
-                style: ElevatedButton.styleFrom(
-                  primary: Color.fromRGBO(226, 153, 66, 1),
-                  onPrimary: Colors.white,
-                  padding: EdgeInsets.symmetric(vertical: 25),
-                ),
-              ),
+              const Text('Perfil'),
             ],
           ),
+          titleTextStyle: TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+          )),
+      body: SingleChildScrollView(
+        child: Container(
+          height: MediaQuery.of(context).size.height,
+          color: Color.fromRGBO(114, 133, 202, 1),
+          child: Padding(
+            padding: const EdgeInsets.all(36.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SizedBox(height: 20),
+                Center(
+                  child: GestureDetector(
+                    onTap: _pickImage,
+                    child: CircleAvatar(
+                      radius: 60,
+                      backgroundImage:
+                          _image != null ? FileImage(_image!) : null,
+                      child: _image == null
+                          ? Icon(Icons.add_a_photo, size: 60)
+                          : null,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 50),
+                ElevatedButton(
+                  onPressed: _pickImage,
+                  style: ElevatedButton.styleFrom(
+                    primary: Color.fromRGBO(226, 153, 66, 1),
+                    onPrimary: Colors.white,
+                    padding: EdgeInsets.symmetric(vertical: 25),
+                  ),
+                  child: Text('Escolher Foto', style: TextStyle(fontSize: 18)),
+                ),
+                SizedBox(height: 30),
+                _buildEditableField(
+                  label: 'Nome de Usuário',
+                  value: _username,
+                  onEdit: _editUsername,
+                ),
+                Divider(color: Colors.white),
+                _buildEditableField(
+                  label: 'Nome da Empresa',
+                  value: _companyName,
+                  onEdit: _editCompanyName,
+                ),
+                Divider(color: Colors.white),
+                SizedBox(height: 50),
+                ElevatedButton(
+                  onPressed: _logout,
+                  child: Text('Sair / Alterar Conta',
+                      style: TextStyle(fontSize: 18)),
+                  style: ElevatedButton.styleFrom(
+                    primary: Color.fromRGBO(226, 153, 66, 1),
+                    onPrimary: Colors.white,
+                    padding: EdgeInsets.symmetric(vertical: 25),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: Theme(
+        data: Theme.of(context).copyWith(
+          textTheme: Theme.of(context).textTheme.copyWith(
+                caption: TextStyle(color: Colors.white),
+              ),
+        ),
+        child: BottomNavigationBar(
+          backgroundColor: Color.fromRGBO(114, 133, 202, 1),
+          items: <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: _buildIconWithLabel(Icons.home, _selectedIndex == 0),
+              label: 'Home',
+              backgroundColor: Colors.white,
+            ),
+            BottomNavigationBarItem(
+              icon: _buildIconWithLabel(
+                Icons.currency_exchange_outlined,
+                _selectedIndex == 1,
+              ),
+              label: 'Finanças',
+              backgroundColor: Colors.white,
+            ),
+            BottomNavigationBarItem(
+              icon: _buildIconWithLabel(Icons.person, _selectedIndex == 2),
+              label: 'Perfil',
+              backgroundColor: Colors.white,
+            ),
+          ],
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Colors.white70,
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
         ),
       ),
     );
   }
+}
 
-  Widget _buildEditableField({
-    required String label,
-    required String value,
-    required VoidCallback onEdit,
-    bool showIcon = false,
-  }) {
-    return Row(
-      children: [
-        Expanded(
-          child: Text(
-            value.isNotEmpty ? value : label,
-            style: TextStyle(fontSize: 20, color: Colors.white),
-          ),
+Widget _buildEditableField({
+  required String label,
+  required String value,
+  required VoidCallback onEdit,
+  bool showIcon = false,
+}) {
+  return Row(
+    children: [
+      Expanded(
+        child: Text(
+          value.isNotEmpty ? value : label,
+          style: TextStyle(fontSize: 20, color: Colors.white),
         ),
-        SizedBox(width: 12),
-        IconButton(
-          icon: Icon(showIcon ? Icons.visibility : Icons.edit,
-              color: Colors.white, size: 28),
-          onPressed: onEdit,
-        ),
-      ],
-    );
-  }
+      ),
+      SizedBox(width: 12),
+      IconButton(
+        icon: Icon(showIcon ? Icons.visibility : Icons.edit,
+            color: Colors.white, size: 28),
+        onPressed: onEdit,
+      ),
+    ],
+  );
 }
