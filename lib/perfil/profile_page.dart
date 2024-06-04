@@ -174,13 +174,19 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Perfil'),
         backgroundColor: Color.fromRGBO(114, 133, 202, 1),
+        titleTextStyle: TextStyle(
+          color: Colors.white,
+          fontSize: 24,
+        ),
+        title: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          const Text('Perfil'),
+        ]),
       ),
       body: Container(
         color: Color.fromRGBO(114, 133, 202, 1),
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(36.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -189,73 +195,82 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: GestureDetector(
                   onTap: _pickImage,
                   child: CircleAvatar(
-                    radius: 50,
+                    radius: 60,
                     backgroundImage: _image != null ? FileImage(_image!) : null,
                     child: _image == null
-                        ? Icon(Icons.add_a_photo, size: 50)
+                        ? Icon(Icons.add_a_photo, size: 60)
                         : null,
                   ),
                 ),
               ),
-              SizedBox(height: 10),
+              SizedBox(height: 30),
               ElevatedButton(
                 onPressed: _pickImage,
-                child: Text('Escolher Foto'),
+                style: ElevatedButton.styleFrom(
+                  primary: Color.fromRGBO(226, 153, 66, 1),
+                  onPrimary: Colors.white,
+                  padding: EdgeInsets.symmetric(vertical: 25),
+                ),
+                child: Text('Escolher Foto', style: TextStyle(fontSize: 18)),
               ),
-              SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      _username,
-                      style: TextStyle(fontSize: 18, color: Colors.white),
-                    ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.edit, color: Colors.white),
-                    onPressed: _editUsername,
-                  ),
-                ],
+              SizedBox(height: 40),
+              _buildEditableField(
+                label: 'Nome de Usuário',
+                value: _username,
+                onEdit: _editUsername,
               ),
               Divider(color: Colors.white),
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      _companyName,
-                      style: TextStyle(fontSize: 18, color: Colors.white),
-                    ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.edit, color: Colors.white),
-                    onPressed: _editCompanyName,
-                  ),
-                ],
+              _buildEditableField(
+                label: 'Nome da Empresa',
+                value: _companyName,
+                onEdit: _editCompanyName,
               ),
               Divider(color: Colors.white),
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      'Minhas Credenciais',
-                      style: TextStyle(fontSize: 18, color: Colors.white),
-                    ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.visibility, color: Colors.white),
-                    onPressed: _showCredentials,
-                  ),
-                ],
+              _buildEditableField(
+                label: 'Minhas Credenciais',
+                value: '',
+                onEdit: _showCredentials,
+                showIcon: true,
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 50),
               ElevatedButton(
                 onPressed: _logout,
-                child: Text('Sair / Alterar Conta'),
+                child: Text('Sair / Alterar Conta',
+                    style: TextStyle(fontSize: 18)),
+                style: ElevatedButton.styleFrom(
+                  primary: Color.fromRGBO(226, 153, 66, 1),
+                  onPrimary: Colors.white,
+                  padding: EdgeInsets.symmetric(vertical: 25),
+                ),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildEditableField({
+    required String label,
+    required String value,
+    required VoidCallback onEdit,
+    bool showIcon = false,
+  }) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            value.isNotEmpty ? value : label,
+            style: TextStyle(fontSize: 20, color: Colors.white),
+          ),
+        ),
+        SizedBox(width: 12),
+        IconButton(
+          icon: Icon(showIcon ? Icons.visibility : Icons.edit,
+              color: Colors.white, size: 28),
+          onPressed: onEdit,
+        ),
+      ],
     );
   }
 }
