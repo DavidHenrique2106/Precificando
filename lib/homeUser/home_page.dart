@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flora/perfil/profile_page.dart';
 import 'package:flora/homeUser/cardapio_screen.dart';
 import 'package:flora/ingredientes/model/IngredientsPage.dart';
+import 'package:flora/perfil/profile_page.dart';
+import 'dart:io';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -15,6 +18,23 @@ class _MyHomePageState extends State<MyHomePage> {
     MyHomePage(), // Página inicial (Home)
     ProfilePage(), // Página do perfil
   ];
+  String _username = "Usuário";
+  String _companyName = "Nome da Empresa";
+  Future<void> _fetchCredentials() async {
+    final user = await ParseUser.currentUser() as ParseUser?;
+    if (user != null) {
+      setState(() {
+        _username = user.username!;
+        _companyName = user.get<String>('companyName') ?? 'Nome da Empresa';
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCredentials();
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -84,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Flora Matos',
+                        _username,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,
@@ -92,7 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                       Text(
-                        'Empresa XYZ',
+                        _companyName,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 14,
