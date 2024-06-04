@@ -209,8 +209,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ElevatedButton(
                 onPressed: _pickImage,
                 style: ElevatedButton.styleFrom(
-                    primary: Color.fromRGBO(226, 153, 66, 1),
-                    onPrimary: Colors.white,
+                    foregroundColor: Colors.white, backgroundColor: Color.fromRGBO(226, 153, 66, 1),
                     padding: EdgeInsets.symmetric(vertical: 20)),
                 child: Text('Escolher Foto'),
               ),
@@ -264,8 +263,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 onPressed: _logout,
                 child: Text('Sair / Alterar Conta'),
                 style: ElevatedButton.styleFrom(
-                  primary: Color.fromRGBO(226, 153, 66, 1),
-                  onPrimary: Colors.white,
+                  foregroundColor: Colors.white, backgroundColor: Color.fromRGBO(226, 153, 66, 1),
                   padding: EdgeInsets.symmetric(vertical: 20),
                 ),
               ),
