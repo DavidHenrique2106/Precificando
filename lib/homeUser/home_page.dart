@@ -413,7 +413,7 @@ class _MyHomePageState extends State<MyHomePage> {
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
           textTheme: Theme.of(context).textTheme.copyWith(
-                caption: TextStyle(color: Colors.white),
+                bodySmall: TextStyle(color: Colors.white),
               ),
         ),
         child: ClipRRect(
