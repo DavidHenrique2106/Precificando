@@ -86,6 +86,10 @@ class _MyHomePageState extends State<MyHomePage> {
             Container(
               padding: EdgeInsets.all(8.0),
               decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(16.0),
+                  bottomRight: Radius.circular(16.0),
+                ),
                 color: Color.fromRGBO(114, 133, 202, 1),
               ),
               child: Row(
