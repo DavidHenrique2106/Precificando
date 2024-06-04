@@ -149,11 +149,10 @@ class _MyHomePageState extends State<MyHomePage> {
                             ],
                           ),
                         ),
-                        SizedBox(width: 20),
-                        Icon(
-                          Icons.store,
-                          color: Color.fromRGBO(226, 153, 66, 1),
-                          size: 100,
+                        SizedBox(width: 10),
+                        Container(
+                          height: 100,
+                          child: Image.asset('lib/assets/bemvindo.png'),
                         ),
                       ],
                     ),
