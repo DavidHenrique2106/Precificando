@@ -55,6 +55,11 @@ class ProductListPageState extends State<ProductListPage> {
   void _onItemTapped(int index) {
     setState(() {
       if (index == 1) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MyHomePage()),
+        );
+
         // Lógica para index 1, se necessário
       } else if (index == 2) {
         Navigator.push(
