@@ -5,6 +5,7 @@ import 'EditProdutoPage.dart';
 import 'package:flora/homeUser/home_page.dart';
 import 'package:flora/perfil/profile_page.dart';
 
+
 class ProductListPage extends StatefulWidget {
   @override
   ProductListPageState createState() => ProductListPageState();
@@ -99,7 +100,7 @@ class ProductListPageState extends State<ProductListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(114, 133, 202, 1),
+       backgroundColor: Color.fromRGBO(114, 133, 202, 1),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [const Text("Lista de Produtos")],
@@ -194,7 +195,8 @@ class ProductListPageState extends State<ProductListPage> {
           ],
         ),
       ),
-      bottomNavigationBar: Theme(
+
+     bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
           textTheme: Theme.of(context).textTheme.copyWith(
                 caption: TextStyle(color: Colors.white),
