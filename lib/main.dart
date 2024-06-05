@@ -10,18 +10,20 @@ import 'package:flora/ingredientes/model/AddIngredientPage.dart';
 import 'package:flora/ingredientes/model/EditIngredientPage.dart';
 import 'package:flora/ingredientes/model/IngredientsPage.dart';
 import 'package:flora/perfil/profile_page.dart';
+import 'package:flora/financas/dashboard.dart';
 
 void main() async {
-  {
-    WidgetsFlutterBinding.ensureInitialized();
-    final keyApplicationId = 'MGrlk40ufPq0FndIImuk7VlzJb7FSsj1NHHgtuVP';
-    final keyClientKey = 'ZeIrpHMzxeruZCcYQFOmvI5duT6wpGLUJVOWMsMQ';
-    final keyParseServerUrl = 'https://parseapi.back4app.com';
+  WidgetsFlutterBinding.ensureInitialized();
+  final keyApplicationId = 'MGrlk40ufPq0FndIImuk7VlzJb7FSsj1NHHgtuVP';
+  final keyClientKey = 'ZeIrpHMzxeruZCcYQFOmvI5duT6wpGLUJVOWMsMQ';
+  final keyParseServerUrl = 'https://parseapi.back4app.com';
 
-    await Parse().initialize(keyApplicationId, keyParseServerUrl,
-        clientKey: keyClientKey, autoSendSessionId: true);
-  }
-
+  await Parse().initialize(
+    keyApplicationId,
+    keyParseServerUrl,
+    clientKey: keyClientKey,
+    autoSendSessionId: true,
+  );
   runApp(MyApp());
 }
 
@@ -37,6 +39,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => LoginPage(),
         '/register': (context) => RegisterPage(),
         '/profile': (context) => ProfilePage(),
+        '/dashboard': (context) => DashboardPage(),
       },
     );
   }

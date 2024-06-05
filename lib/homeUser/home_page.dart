@@ -1,10 +1,8 @@
+import 'package:flora/financas/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flora/perfil/profile_page.dart';
 import 'package:flora/homeUser/cardapio_screen.dart';
 import 'package:flora/ingredientes/model/IngredientsPage.dart';
-import 'package:flora/perfil/profile_page.dart';
-import 'dart:io';
-import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -16,30 +14,17 @@ class _MyHomePageState extends State<MyHomePage> {
 
   static List<Widget> _widgetOptions = <Widget>[
     MyHomePage(), // Página inicial (Home)
-    ProfilePage(), // Página do perfil
+    ProfilePage(),
+    DashboardPage() // Página do perfil
   ];
-  String _username = "Usuário";
-  String _companyName = "Nome da Empresa";
-  Future<void> _fetchCredentials() async {
-    final user = await ParseUser.currentUser() as ParseUser?;
-    if (user != null) {
-      setState(() {
-        _username = user.username!;
-        _companyName = user.get<String>('companyName') ?? 'Nome da Empresa';
-      });
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchCredentials();
-  }
 
   void _onItemTapped(int index) {
     setState(() {
       if (index == 1) {
-        // Lógica para index 1, se necessário
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => DashboardPage()),
+        );
       } else if (index == 2) {
         Navigator.push(
           context,
@@ -86,10 +71,6 @@ class _MyHomePageState extends State<MyHomePage> {
             Container(
               padding: EdgeInsets.all(8.0),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(16.0),
-                  bottomRight: Radius.circular(16.0),
-                ),
                 color: Color.fromRGBO(114, 133, 202, 1),
               ),
               child: Row(
@@ -97,18 +78,18 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: [
                   Container(
                     width: 90,
-                    height: 120,
+                    height: 90,
                     child: Icon(
                       Icons.person,
                       color: Colors.white,
-                      size: 60,
+                      size: 40,
                     ),
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        _username,
+                        'Flora Matos',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,
@@ -116,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                       Text(
-                        _companyName,
+                        'Empresa XYZ',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 14,
@@ -127,7 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ],
               ),
             ),
-            SizedBox(height: 40),
+            SizedBox(height: 10),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0),
               child: Stack(
@@ -350,14 +331,11 @@ class _MyHomePageState extends State<MyHomePage> {
                           maxLines: 4,
                         ),
                       ),
-                      // Espaçamento entre o ícone e o texto
-
-                      Container(
-                        color: Color.fromRGBO(114, 133, 202, 1),
-                        height: 60,
-                        child: Image.asset(
-                          'lib/assets/preci.png',
-                        ),
+                      // Adicionar imagem representando os planos
+                      Image.asset(
+                        'lib/assets/planos.png', // Certifique-se de ter uma imagem chamada planos.png na pasta assets
+                        width: 80,
+                        height: 80,
                       ),
                     ],
                   ),
@@ -437,7 +415,7 @@ class _MyHomePageState extends State<MyHomePage> {
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
           textTheme: Theme.of(context).textTheme.copyWith(
-                caption: TextStyle(color: Colors.white),
+                bodySmall: TextStyle(color: Colors.white),
               ),
         ),
         child: ClipRRect(
