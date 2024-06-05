@@ -1,8 +1,12 @@
-import 'package:flora/financas/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flora/perfil/profile_page.dart';
 import 'package:flora/homeUser/cardapio_screen.dart';
 import 'package:flora/ingredientes/model/IngredientsPage.dart';
+import 'package:flora/perfil/profile_page.dart';
+import 'dart:io';
+import 'package:flora/financas/Planos.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk_flutter.dart';
+import 'package:flora/financas/dashboard.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -15,8 +19,25 @@ class _MyHomePageState extends State<MyHomePage> {
   static List<Widget> _widgetOptions = <Widget>[
     MyHomePage(), // Página inicial (Home)
     ProfilePage(),
-    DashboardPage() // Página do perfil
+    DashboardPage(), // Página do perfil
   ];
+  String _username = "Usuário";
+  String _companyName = "Nome da Empresa";
+  Future<void> _fetchCredentials() async {
+    final user = await ParseUser.currentUser() as ParseUser?;
+    if (user != null) {
+      setState(() {
+        _username = user.username!;
+        _companyName = user.get<String>('companyName') ?? 'Nome da Empresa';
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCredentials();
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -69,8 +90,12 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Container(
-              padding: EdgeInsets.all(8.0),
+              padding: EdgeInsets.only(top: 42.0),
               decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(16.0),
+                  bottomRight: Radius.circular(16.0),
+                ),
                 color: Color.fromRGBO(114, 133, 202, 1),
               ),
               child: Row(
@@ -78,18 +103,18 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: [
                   Container(
                     width: 90,
-                    height: 90,
+                    height: 130,
                     child: Icon(
                       Icons.person,
                       color: Colors.white,
-                      size: 40,
+                      size: 60,
                     ),
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Flora Matos',
+                        _username,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,
@@ -97,7 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                       Text(
-                        'Empresa XYZ',
+                        _companyName,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 14,
@@ -108,7 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ],
               ),
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 40),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0),
               child: Stack(
@@ -190,12 +215,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => IngredientListPage(),
-                        ),
-                      );
+                      Navigator.pushNamed(context, '/ingredientes');
                     },
                     child: Container(
                       width: MediaQuery.of(context).size.width * 0.4,
@@ -297,12 +317,12 @@ class _MyHomePageState extends State<MyHomePage> {
               padding: EdgeInsets.symmetric(horizontal: 30.0),
               child: GestureDetector(
                 onTap: () {
-                  /*Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => IngredientListPage(),
-                      ),
-                    );**/
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CarouselScreen(),
+                    ),
+                  );
                 },
                 child: Container(
                   width: MediaQuery.of(context).size.width,
@@ -331,11 +351,14 @@ class _MyHomePageState extends State<MyHomePage> {
                           maxLines: 4,
                         ),
                       ),
-                      // Adicionar imagem representando os planos
-                      Image.asset(
-                        'lib/assets/planos.png', // Certifique-se de ter uma imagem chamada planos.png na pasta assets
-                        width: 80,
-                        height: 80,
+                      // Espaçamento entre o ícone e o texto
+
+                      Container(
+                        color: Color.fromRGBO(114, 133, 202, 1),
+                        height: 60,
+                        child: Image.asset(
+                          'lib/assets/preci.png',
+                        ),
                       ),
                     ],
                   ),
@@ -415,7 +438,7 @@ class _MyHomePageState extends State<MyHomePage> {
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
           textTheme: Theme.of(context).textTheme.copyWith(
-                bodySmall: TextStyle(color: Colors.white),
+                caption: TextStyle(color: Colors.white),
               ),
         ),
         child: ClipRRect(
