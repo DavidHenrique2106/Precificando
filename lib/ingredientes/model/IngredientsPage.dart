@@ -29,7 +29,7 @@ class _IngredientListPageState extends State<IngredientListPage> {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color:
-            isSelected ? Color.fromRGBO(226, 153, 66, 1) : Colors.transparent,
+        isSelected ? Color.fromRGBO(226, 153, 66, 1) : Colors.transparent,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -53,7 +53,6 @@ class _IngredientListPageState extends State<IngredientListPage> {
           MaterialPageRoute(builder: (context) => MyHomePage()),
         );
 
-        // Lógica para index 1, se necessário
       } else if (index == 2) {
         Navigator.push(
           context,
@@ -73,19 +72,19 @@ class _IngredientListPageState extends State<IngredientListPage> {
 
   Future<void> _loadIngredients() async {
     QueryBuilder<ParseObject> queryIngredients =
-        QueryBuilder<ParseObject>(ParseObject('Ingredients'));
+    QueryBuilder<ParseObject>(ParseObject('Ingredients'));
     final ParseResponse apiResponse = await queryIngredients.query();
 
     if (apiResponse.success && apiResponse.results != null) {
       setState(() {
         ingredients = apiResponse.results as List<ParseObject>;
-        // Inicializar a lista filtrada com todos os ingredientes
+
         filteredIngredients = List.from(ingredients);
       });
     }
   }
 
-  // Método para filtrar os ingredientes com base na consulta de pesquisa
+
   void _filterIngredients(String query) {
     setState(() {
       searchQuery = query;
@@ -139,15 +138,32 @@ class _IngredientListPageState extends State<IngredientListPage> {
                 ),
               ),
             ),
-            // Lista de Ingredientes
+
+
             ListView.builder(
               physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               itemCount: filteredIngredients.length,
               itemBuilder: (context, index) {
                 final ingredient = filteredIngredients[index];
+
+                String objectId = ingredient.objectId!;
+                String name = ingredient.get<String>('name') ?? 'No Name';
+                int quantity = ingredient.get<int>('quantity') ?? 0;
+                int totalCost = ingredient.get<int>('totalCost') ?? 0;
+                String unitType = ingredient.get<String>('unitType') ?? 'unidades';
+                double unitCostPrice = quantity != 0 ? totalCost / quantity : 0.0;
+
                 return ListTile(
-                  title: Text(ingredient.get<String>('name') ?? 'No Name'),
+                  title: Text(name),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Quantidade: $quantity $unitType'),
+                      Text('Custo Total: $totalCost'),
+                      Text('Preço por $unitType: ${unitCostPrice.toStringAsFixed(2)}'),
+                    ],
+                  ),
                   trailing: PopupMenuButton(
                     itemBuilder: (context) => [
                       PopupMenuItem(
@@ -164,8 +180,14 @@ class _IngredientListPageState extends State<IngredientListPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                EditIngredientPage(index, ingredients.cast()),
+                            builder: (context) => EditIngredientPage(
+                              objectId: objectId,
+                              name: name,
+                              quantity: quantity,
+                              totalCost: totalCost,
+                              unitCostPrice: unitCostPrice,
+                              unitType: unitType,
+                            ),
                           ),
                         ).then((value) {
                           if (value != null) {
@@ -180,7 +202,7 @@ class _IngredientListPageState extends State<IngredientListPage> {
                 );
               },
             ),
-            SizedBox(height: 20), // Espaço entre a lista e o botão
+            SizedBox(height: 20),
             Center(
               child: FloatingActionButton(
                 onPressed: () async {
@@ -206,9 +228,10 @@ class _IngredientListPageState extends State<IngredientListPage> {
       ),
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
-          textTheme: Theme.of(context).textTheme.copyWith(
-                caption: TextStyle(color: Colors.white),
-              ),
+          textTheme: Theme.of
+            (context).textTheme.copyWith(
+            bodySmall: TextStyle(color: Colors.white),
+          ),
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.only(

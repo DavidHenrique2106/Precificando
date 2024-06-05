@@ -13,6 +13,9 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
 
   double costPricePerUnit = 0.0;
   double totalCostPrice = 0.0;
+  String selectedUnitType = 'kgs';
+
+  final List<String> unitTypes = ['kgs', 'mls', 'unidades'];
 
   @override
   Widget build(BuildContext context) {
@@ -29,12 +32,28 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
               controller: nameController,
               decoration: InputDecoration(labelText: 'Nome do Ingrediente'),
             ),
+            DropdownButtonFormField<String>(
+              value: selectedUnitType,
+              items: unitTypes.map((String unitType) {
+                return DropdownMenuItem<String>(
+                  value: unitType,
+                  child: Text(unitType),
+                );
+              }).toList(),
+              onChanged: (String? newValue) {
+                setState(() {
+                  selectedUnitType = newValue!;
+                  calculateCostPricePerUnit();
+                });
+              },
+              decoration: InputDecoration(labelText: 'Tipo de Quantitativo'),
+            ),
             TextField(
               controller: quantityController,
               decoration: InputDecoration(labelText: 'Quantidade Comprada'),
               keyboardType: TextInputType.number,
               onChanged: (value) {
-                calculateTotalCostPrice();
+                calculateCostPricePerUnit();
               },
             ),
             TextField(
@@ -45,6 +64,8 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
                 calculateCostPricePerUnit();
               },
             ),
+            SizedBox(height: 16.0),
+            Text('Preço por ${selectedUnitType.substring(0, selectedUnitType.length - 1)}: R\$ ${costPricePerUnit.toStringAsFixed(2)}', style: TextStyle(fontSize: 18)),
             SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () {
@@ -70,14 +91,6 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
     });
   }
 
-  void calculateTotalCostPrice() {
-    setState(() {
-      double quantity = double.tryParse(quantityController.text) ?? 0.0;
-      double price = double.tryParse(totalCostPriceController.text) ?? 0.0;
-      totalCostPrice = quantity * price;
-    });
-  }
-
   void addIngredientToParse() async {
     try {
       final currentUser = await ParseUser.currentUser();
@@ -90,7 +103,9 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
         final ingredient = ParseObject('Ingredients')
           ..set('name', name)
           ..set('quantity', quantity)
-          ..set('totalCostPrice', totalCostPrice);
+          ..set('totalCost', totalCostPrice) // Salva o preço total de compra
+          ..set('costPricePerUnit', costPricePerUnit) // Salva o custo unitário calculado
+          ..set('unitType', selectedUnitType); // Salva o tipo de quantitativo
 
         final acl = ParseACL(owner: currentUser);
         ingredient.setACL(acl);

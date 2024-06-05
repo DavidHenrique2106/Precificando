@@ -8,59 +8,65 @@ class ProductDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final productName = product.get<String>('name') ?? 'No Name';
-    final totalCostPrice = product.get<double>('totalCostPrice') ?? 0.0;
-    final ingredients = product.get<Map<String, dynamic>>('ingredients') ?? {};
+    final String name = product.get<String>('name') ?? 'No Name';
+    final double totalCostPrice = product.get<double>('totalCostPrice') ?? 0.0;
+    final Map<String, dynamic> ingredients = product.get<Map<String, dynamic>>('ingredients') ?? {};
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Detalhes do Produto'),
+        title: Text(name),
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Nome: $productName',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Preço Total: R\$${totalCostPrice.toStringAsFixed(2)}',
-              style: TextStyle(fontSize: 18),
-            ),
-            SizedBox(height: 16),
-            Text(
-              'Ingredientes:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 8),
+            Text('Nome: $name', style: TextStyle(fontSize: 20)),
+            SizedBox(height: 8.0),
+            Text('Preço Total: R\$ ${totalCostPrice.toStringAsFixed(2)}', style: TextStyle(fontSize: 18)),
+            SizedBox(height: 16.0),
+            Text('Ingredientes:', style: TextStyle(fontSize: 18)),
+            SizedBox(height: 8.0),
             Expanded(
-              child: ingredients.isNotEmpty
-                  ? ListView.builder(
-                itemCount: ingredients.length,
+              child: ListView.builder(
+                itemCount: ingredients.keys.length,
                 itemBuilder: (context, index) {
                   final ingredientName = ingredients.keys.elementAt(index);
-                  final ingredientData = ingredients[ingredientName];
-                  final amount = ingredientData['amount'] ?? 0;
+                  final ingredientData = ingredients[ingredientName] as Map<String, dynamic>;
                   final unitCostPrice = ingredientData['unitCostPrice'] ?? 0.0;
-                  final totalCostPrice = ingredientData['totalCostPrice'] ?? 0.0;
+                  final amount = ingredientData['amount'] ?? 0;
+                  final selectedUnitType = ingredientData['selectedUnitType'] ?? 'unidades';
+
+                  String quantityLabel = '';
+                  String priceLabel = '';
+
+                  switch (selectedUnitType) {
+                    case 'kgs':
+                      quantityLabel = 'Quantidade em kgs';
+                      priceLabel = 'Preço por kg';
+                      break;
+                    case 'mls':
+                      quantityLabel = 'Quantidade em mls';
+                      priceLabel = 'Preço por ml';
+                      break;
+                    case 'unidades':
+                      quantityLabel = 'Quantidade de unidades';
+                      priceLabel = 'Preço por unidade';
+                      break;
+                  }
 
                   return ListTile(
                     title: Text(ingredientName),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Quantidade: $amount'),
-                        Text('Custo Unitário: R\$${unitCostPrice.toStringAsFixed(2)}'),
-                        Text('Custo Total: R\$${totalCostPrice.toStringAsFixed(2)}'),
+                        Text('$quantityLabel: $amount'),
+                        Text('$priceLabel: R\$ ${unitCostPrice.toStringAsFixed(2)}'),
                       ],
                     ),
                   );
                 },
-              )
-                  : Center(child: Text('Nenhum ingrediente encontrado')),
+              ),
             ),
           ],
         ),

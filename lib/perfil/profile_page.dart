@@ -256,15 +256,20 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
                 SizedBox(height: 50),
-                ElevatedButton(
-                  onPressed: _pickImage,
-                  style: ElevatedButton.styleFrom(
-                    primary: Color.fromRGBO(226, 153, 66, 1),
-                    onPrimary: Colors.white,
-                    padding: EdgeInsets.symmetric(vertical: 25),
-                  ),
-                  child: Text('Escolher Foto', style: TextStyle(fontSize: 18)),
+            ElevatedButton(
+              onPressed: _pickImage,
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 25),
+              ).copyWith(
+                backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                      (Set<MaterialState> states) {
+                    return Color.fromRGBO(226, 153, 66, 1);
+                  },
                 ),
+
+              ),
+              child: Text('Escolher Foto', style: TextStyle(fontSize: 18)),
+            ),
                 SizedBox(height: 30),
                 _buildEditableField(
                   label: 'Nome de Usuário',
@@ -281,14 +286,18 @@ class _ProfilePageState extends State<ProfilePage> {
                 SizedBox(height: 50),
                 ElevatedButton(
                   onPressed: _logout,
-                  child: Text('Sair / Alterar Conta',
-                      style: TextStyle(fontSize: 18)),
+                  child: Text('Sair / Alterar Conta', style: TextStyle(fontSize: 18)),
                   style: ElevatedButton.styleFrom(
-                    primary: Color.fromRGBO(226, 153, 66, 1),
-                    onPrimary: Colors.white,
                     padding: EdgeInsets.symmetric(vertical: 25),
+                  ).copyWith(
+                    backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                          (Set<MaterialState> states) {
+                        return Color.fromRGBO(226, 153, 66, 1);
+                      },
+                    ),
                   ),
                 ),
+
               ],
             ),
           ),
@@ -297,7 +306,7 @@ class _ProfilePageState extends State<ProfilePage> {
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
           textTheme: Theme.of(context).textTheme.copyWith(
-                caption: TextStyle(color: Colors.white),
+                bodySmall: TextStyle(color: Colors.white),
               ),
         ),
         child: BottomNavigationBar(
@@ -347,10 +356,10 @@ Widget _buildEditableField({
         ),
       ),
       SizedBox(width: 12),
-      IconButton(
-        icon: Icon(showIcon ? Icons.visibility : Icons.edit,
+      InkWell(
+        onTap: onEdit,
+        child: Icon(showIcon ? Icons.visibility : Icons.edit,
             color: Colors.white, size: 28),
-        onPressed: onEdit,
       ),
     ],
   );
